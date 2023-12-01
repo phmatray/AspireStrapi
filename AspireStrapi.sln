@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.AppHost", "AspireStrapi\AspireStrapi.AppHost\AspireStrapi.AppHost.csproj", "{43941FE7-4AC0-4E20-BC70-1339AFC5A911}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.ServiceDefaults", "AspireStrapi\AspireStrapi.ServiceDefaults\AspireStrapi.ServiceDefaults.csproj", "{4A906044-8CB0-450A-BAE2-9815F572431B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.BlazorBlog", "AspireStrapi.BlazorBlog\AspireStrapi.BlazorBlog.csproj", "{FBF14DD6-407F-47AB-89B6-B559B8796646}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43941FE7-4AC0-4E20-BC70-1339AFC5A911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43941FE7-4AC0-4E20-BC70-1339AFC5A911}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43941FE7-4AC0-4E20-BC70-1339AFC5A911}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43941FE7-4AC0-4E20-BC70-1339AFC5A911}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A906044-8CB0-450A-BAE2-9815F572431B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A906044-8CB0-450A-BAE2-9815F572431B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A906044-8CB0-450A-BAE2-9815F572431B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A906044-8CB0-450A-BAE2-9815F572431B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBF14DD6-407F-47AB-89B6-B559B8796646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF14DD6-407F-47AB-89B6-B559B8796646}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF14DD6-407F-47AB-89B6-B559B8796646}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF14DD6-407F-47AB-89B6-B559B8796646}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

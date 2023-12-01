@@ -1,0 +1,10 @@
+query GetPageAbout {
+  about {
+    data {
+      attributes {
+        title
+        createdAt
+      }
+    }
+  }
+}

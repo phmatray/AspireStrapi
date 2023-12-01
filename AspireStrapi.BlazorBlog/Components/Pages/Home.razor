@@ -1,0 +1,40 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<UseGetArticles Context="result">
+    <ChildContent>
+        <ul>
+            @foreach (IGetArticles_Articles_Data item in result.Articles!.Data)
+            {
+                <li>@item.Attributes!.Title</li>
+            }
+        </ul>
+    </ChildContent>
+    <ErrorContent>
+        Something went wrong ...<br />
+        @result.First().Message
+    </ErrorContent>
+    <LoadingContent>
+        Loading ...
+    </LoadingContent>
+</UseGetArticles>
+
+<UseGetPageAbout Context="result">
+    <ChildContent>
+        <h1>@result.About!.Data!.Attributes!.Title</h1>
+    </ChildContent>
+    <ErrorContent>
+        Something went wrong ...<br />
+        @result.First().Message
+    </ErrorContent>
+    <LoadingContent>
+        Loading ...
+    </LoadingContent>
+
+</UseGetPageAbout>

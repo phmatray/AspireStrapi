@@ -1,0 +1,11 @@
+query GetArticles {
+  articles {
+    data {
+      id
+      attributes {
+        title
+        description
+      }
+    }
+  }
+}

@@ -8,17 +8,19 @@ public class StrapiContainerResource(string name)
     : ContainerResource(name), IStrapiResource
 {
     /// <summary>
+    /// Gets the connection string expression for the Strapi server.
+    /// </summary>
+    public ReferenceExpression ConnectionStringExpression => 
+        ReferenceExpression.Create($"http://{{{Name}.bindings.http.host}}:{{{Name}.bindings.http.port}}");
+
+    /// <summary>
     /// Gets the connection string for the Strapi server.
     /// </summary>
     /// <returns>A connection string for the Strapi server in the form "http://host:port".</returns>
     public string? GetConnectionString()
     {
-        if (!this.TryGetAllocatedEndPoints(out var allocatedEndpoints))
-        {
-            throw new DistributedApplicationException($"Strapi resource \"{Name}\" does not have endpoint annotation.");
-        }
-        
-        var endpoint = allocatedEndpoints.Single();
-        return $"http://{endpoint.EndPointString}";
+        // In Aspire 9, we return null here as the actual connection string 
+        // is resolved at runtime through the ConnectionStringExpression
+        return null;
     }
 }

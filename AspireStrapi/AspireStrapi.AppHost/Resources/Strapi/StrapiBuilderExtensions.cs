@@ -48,13 +48,8 @@ public static class StrapiBuilderExtensions
             .AddResource(plexContainer)
             // TODO: Use a custom image.
             .WithAnnotation(new ContainerImageAnnotation { Image = "ghcr.io/linuxserver/plex", Tag = "latest" })
-            .WithAnnotation(new ServiceBindingAnnotation(
-                protocol: ProtocolType.Tcp,
-                uriScheme: "http",
-                name: "web",
-                port: port,
-                containerPort: 32400))
-            .WithAnnotation(new ManifestPublishingCallbackAnnotation(WriteStrapiContainerToManifest))
+            .WithHttpEndpoint(port: port, targetPort: 32400, name: "web")
+            .PublishAsContainer()
             .WithEnvironment(NodeEnvEnvVarName, "production")
             .WithEnvironment(DatabaseClientEnvVarName, "mysql")
             .WithEnvironment(DatabaseHostEnvVarName, "mysql")
@@ -62,10 +57,5 @@ public static class StrapiBuilderExtensions
             .WithEnvironment(DatabaseNameEnvVarName, "strapi")
             .WithEnvironment(DatabaseUsernameEnvVarName, "strapi")
             .WithEnvironment(DatabasePasswordEnvVarName, "strapi");
-    }
-    
-    private static void WriteStrapiContainerToManifest(Utf8JsonWriter json)
-    {
-        json.WriteString("type", "plex.server.v0");
     }
 }

@@ -12,11 +12,11 @@ var strapi = builder
         command: "npm",
         workingDirectory: "../../Backend/backend-blog/",
         args: ["run", "develop"])
-    .WithServiceBinding(1337, 1337, "http", "strapi-api-dev");
+    .WithHttpEndpoint(port: 1337, targetPort: 1337, name: "http");
 
 builder
     .AddProject<AspireStrapi_BlazorBlog>("frontend-blog")
-    .WithReference(strapi.GetEndpoint("strapi-api-dev"));
+    .WithReference(strapi.GetEndpoint("http"));
 
 builder.Build().Run();
 

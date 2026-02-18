@@ -1,0 +1,15 @@
+# Temporarily commented out due to StrawberryShake v15 compatibility issue
+# query GetArticlesPageBlocks {
+#   articles {
+#     data {
+#       id
+#       attributes {
+#         title
+#         description
+#         blocks {
+#           __typename
+#         }
+#       }
+#     }
+#   }
+# }

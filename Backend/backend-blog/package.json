@@ -3,7 +3,7 @@
     "@strapi/plugin-graphql": "^4.0.5",
     "fs-extra": "^10.0.0",
     "lodash.set": "^4.3.2",
-    "mime-types": "^2.1.27",
+    "mime-types": "^3.0.0",
     "@strapi/strapi": "4.26.1",
     "@strapi/plugin-users-permissions": "4.26.1",
     "@strapi/plugin-i18n": "4.25.23",

@@ -3225,10 +3225,10 @@
     qs "6.14.2"
     sift "16.0.1"
 
-"@strapi/plugin-cloud@5.37.0":
-  version "5.37.0"
-  resolved "https://registry.yarnpkg.com/@strapi/plugin-cloud/-/plugin-cloud-5.37.0.tgz#c0076652474fe91ac1c56c236927b3ba441ec81c"
-  integrity sha512-I/PkC+68Q+shcsxRpWYPRl4ylNvbIMyNrmkY/ehFvcwpXXbZyPHZ1rOOcjSkFxRS7Nqha2Ge4cZPRmb8XbzJUg==
+"@strapi/plugin-cloud@5.37.1":
+  version "5.37.1"
+  resolved "https://registry.yarnpkg.com/@strapi/plugin-cloud/-/plugin-cloud-5.37.1.tgz#bbdf11ae2d975116afaf9d962d663887252202bb"
+  integrity sha512-pr4PeoOZL66EQR8rpHSCNTCbmRtmw0LWYbHSUX2+X32dtGAARIiJ1jZ7TOIm1nIp7mpSFkrjvPSMEx1OmNxsyQ==
   dependencies:
     "@strapi/design-system" "2.1.2"
     "@strapi/icons" "2.1.2"

@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="StrawberryShake.Blazor" Version="15.1.14" />
+      <PackageReference Include="StrawberryShake.Blazor" Version="15.1.16" />
     </ItemGroup>
 
 </Project>

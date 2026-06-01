@@ -25,6 +25,7 @@ adapters at the edges.
 - **Strapi 5.47** — headless CMS (`@strapi/plugin-graphql`), Postgres-backed in production
 - **GraphQL + StrawberryShake 16** — net10-native code generation of a typed `BlogClient`
 - **Blazor** — Server-Side Rendering (SSR) + Interactive Server presentation
+- **Tailwind CSS v4** — an editorial, magazine-style UI ("The Headless Press")
 - **PostgreSQL** — content database for Strapi
 - **OrbStack** — local Docker host for the published Compose deployment
 

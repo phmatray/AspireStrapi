@@ -7,6 +7,8 @@
 [![Blazor](https://img.shields.io/badge/Blazor-SSR%20%2B%20Interactive-512BD4?logo=blazor&logoColor=white)](https://learn.microsoft.com/aspnet/core/blazor/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENCE.md)
 
+![The Headless Press — the AspireStrapi blog home page, an editorial Tailwind design](docs/verification/home-hero.png)
+
 AspireStrapi is a reference demo that wires a **Strapi 5 headless CMS** to a
 **.NET 10 Aspire** application. Content is authored in the Strapi admin UI and
 rendered live by a Blazor frontend that talks to Strapi over **GraphQL** using a

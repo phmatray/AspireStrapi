@@ -8,17 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
+      <Content Include="..\..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AspireStrapi\AspireStrapi.ServiceDefaults\AspireStrapi.ServiceDefaults.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="StrawberryShake.Blazor" Version="16.0.11" />
+      <ProjectReference Include="..\AspireStrapi.ServiceDefaults\AspireStrapi.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\AspireStrapi.Application\AspireStrapi.Application.csproj" />
+      <ProjectReference Include="..\AspireStrapi.Infrastructure\AspireStrapi.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

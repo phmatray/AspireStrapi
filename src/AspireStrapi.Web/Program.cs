@@ -1,14 +1,17 @@
-using AspireStrapi.BlazorBlog.Components;
+using AspireStrapi.Application;
+using AspireStrapi.Infrastructure;
+using AspireStrapi.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add .NET Aspire services to the container.
 builder.AddServiceDefaults();
 
-// Add StrawberryShake GraphQL client services to the container.
-builder.Services
-    .AddBlogClient()
-    .ConfigureHttpClient(client => client.BaseAddress = new Uri("http://strapi-api-dev/graphql"));
+// Add the application use-cases (driving ports).
+builder.Services.AddApplication();
+
+// Add the Strapi GraphQL adapter and the driven-port implementations.
+builder.Services.AddStrapiInfrastructure(new Uri("http://strapi-api-dev/graphql"));
 
 // Add RazorComponents services to the container.
 builder.Services.AddRazorComponents()

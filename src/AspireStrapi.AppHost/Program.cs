@@ -15,7 +15,7 @@ var strapi = builder
     .WithHttpEndpoint(port: 1337, name: "strapi-api-dev");
 
 builder
-    .AddProject<AspireStrapi_BlazorBlog>("frontend-blog")
+    .AddProject<AspireStrapi_Web>("frontend-blog")
     .WithReference(strapi.GetEndpoint("strapi-api-dev"));
 
 builder.Build().Run();

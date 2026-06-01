@@ -4,7 +4,7 @@
   "extensions": {
     "strawberryShake": {
       "name": "BlogClient",
-      "namespace": "AspireStrapi.BlazorBlog.ApiClient",
+      "namespace": "AspireStrapi.Infrastructure.ApiClient",
       "url": "http://localhost:1337/graphql/",
       "records": {
         "inputs": false,

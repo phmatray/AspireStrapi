@@ -1,0 +1,51 @@
+@page "/"
+@rendermode InteractiveServer
+@inject IContentService ContentService
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@if (_loadFailed)
+{
+    <p>Something went wrong ...</p>
+}
+else if (_articles is null || _about is null)
+{
+    <p>Loading ...</p>
+}
+else
+{
+    <ul>
+        @foreach (ArticleDto article in _articles)
+        {
+            <li>@article.Title</li>
+        }
+    </ul>
+
+    @if (_about is not null)
+    {
+        <h1>@_about.Title</h1>
+    }
+}
+
+@code {
+    private IReadOnlyList<ArticleDto>? _articles;
+    private AboutPageDto? _about;
+    private bool _loadFailed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _articles = await ContentService.GetArticlesAsync();
+            _about = await ContentService.GetAboutAsync();
+        }
+        catch
+        {
+            _loadFailed = true;
+        }
+    }
+}

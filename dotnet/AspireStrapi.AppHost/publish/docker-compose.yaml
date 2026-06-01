@@ -61,6 +61,11 @@ services:
     depends_on:
       postgres:
         condition: "service_started"
+    volumes:
+      - type: "volume"
+        target: "/opt/app/public/uploads"
+        source: "aspirestrapi-uploads"
+        read_only: false
     networks:
       - "aspire"
     restart: "unless-stopped"
@@ -91,4 +96,6 @@ networks:
     driver: "bridge"
 volumes:
   aspirestrapi-pgdata:
+    driver: "local"
+  aspirestrapi-uploads:
     driver: "local"

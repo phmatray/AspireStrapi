@@ -65,6 +65,11 @@ var strapi = builder
     .WithEnvironment("TRANSFER_TOKEN_SALT", transferTokenSalt)
     .WithEnvironment("JWT_SECRET", jwtSecret)
     .WithEnvironment("ENCRYPTION_KEY", encryptionKey)
+    // Persist uploaded media. Strapi's local provider writes files to
+    // public/uploads on the container filesystem; without a volume they are
+    // lost whenever the container is recreated (leaving the DB pointing at
+    // 404ing /uploads/* URLs).
+    .WithVolume("aspirestrapi-uploads", "/opt/app/public/uploads")
     .PublishAsDockerComposeService((resource, service) =>
     {
         service.Restart = "unless-stopped";

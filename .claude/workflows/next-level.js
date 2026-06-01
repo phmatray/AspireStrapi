@@ -53,14 +53,21 @@ async function runPhase(title, prompt) {
 
 const results = {}
 
-// ---- Phase 0: Baseline ------------------------------------------------------
-results.baseline = await runPhase('Baseline', `
-Establish a known-good baseline.
+// ---- Phase 0: Baseline (record-only, NON-gating) ----------------------------
+// The repo is intentionally allowed to be broken here — capturing the starting
+// state (including pre-existing build/install failures) is the whole point. The
+// Migrate phase fixes them. So this phase ALWAYS proceeds.
+phase('Baseline')
+results.baseline = await agent(`
+Record the starting state of the repo. Do NOT change any code or commit.
 1. From branch dev, create and checkout ${BRANCH} (or checkout if it exists).
-2. Run \`dotnet build AspireStrapi.sln\` and capture the result.
-3. Run \`npm install\` in Backend/backend-blog and capture the result.
-Gate: dotnet build succeeds AND npm install completes. Do NOT change code — this only verifies the starting point.
-Report installed versions of dotnet SDK, node, docker, and orbstack in notes.`)
+2. Run \`dotnet build AspireStrapi.sln\` and capture all errors/warnings verbatim.
+3. Run \`npm install\` in Backend/backend-blog and capture the result verbatim.
+4. Report installed versions of dotnet SDK + runtimes, node, docker, orbstack.
+This is a RECORD-ONLY phase: set ok=true regardless of build/install outcome, and put the
+full list of every pre-existing build error and npm error into \`notes\` so later phases can fix them.
+${REPO_RULES}`, { label: 'baseline', phase: 'Baseline', schema: STATUS })
+log(`[Baseline] recorded. notes: ${results.baseline?.notes || 'n/a'}`)
 
 // ---- Phase 1: Merge Renovate PRs -------------------------------------------
 results.merge = await runPhase('Merge PRs', `
@@ -73,13 +80,23 @@ Gate: both PRs merged AND branch builds. If a PR is already merged/closed, note 
 
 // ---- Phase 2: Migrate to .NET 10 + latest deps -----------------------------
 results.migrate = await runPhase('Migrate', `
-Migrate the whole solution to .NET 10 and the latest dependencies.
+Migrate the whole solution to .NET 10 and the latest dependencies, AND fix the pre-existing build/install failures recorded by the Baseline phase:
+--- BASELINE NOTES (known issues to fix) ---
+${results.baseline?.notes || 'n/a'}
+--- END ---
+
+These four known issues MUST be resolved:
+(A) ServiceDefaults Extensions.cs: 'IHttpClientBuilder.UseServiceDiscovery' no longer exists in the newer Microsoft.Extensions.ServiceDiscovery — migrate to the current API (the AddServiceDiscovery on the service collection + the new http client wiring per the latest Aspire ServiceDefaults template). Regenerate ServiceDefaults from the current Aspire template shape if cleaner.
+(B) AppHost uses the DEPRECATED Aspire workload (NETSDK1228). Migrate to the NuGet-based Aspire app model per https://aka.ms/aspire/update-to-sdk: add the Aspire.AppHost.Sdk to the AppHost csproj, reference latest Aspire.Hosting.* from NuGet, remove workload reliance.
+(C) StrawberryShake build-time codegen (dotnet-graphql) targets net9 and fails because no .NET 9 runtime is installed (only 8.x + 10.x). Resolve by EITHER upgrading StrawberryShake.* to the latest stable whose tooling runs on net10, OR enabling roll-forward for the codegen tool (e.g. DOTNET_ROLL_FORWARD=LatestMajor), OR installing the .NET 9 runtime side-by-side via the official dotnet-install script. Pick the most robust option and note which.
+(D) npm ERESOLVE: react@19 conflicts with @strapi/strapi 5.42.1 (peer wants react 17/18). Resolve by aligning versions — prefer bumping Strapi to the latest 5.x that supports React 19 if available; otherwise pin react/react-dom to ^18. Use --legacy-peer-deps only as a last resort and note it.
+
+Then the general migration:
 1. In every .csproj set <TargetFramework>net10.0</TargetFramework> (AppHost, ServiceDefaults, BlazorBlog).
-2. Bump Aspire.Hosting and any Aspire.* packages to the latest stable; bump StrawberryShake.* to latest stable; bump all other NuGet PackageReferences to latest stable compatible with net10. Use \`dotnet list package --outdated\` to discover, then update versions in the .csproj files (or via \`dotnet add package\`).
-3. In Backend/backend-blog run \`npm update\` then \`npm install\`; ensure @strapi/plugin-graphql is present and on the 5.x line matching @strapi/strapi.
-4. Address any net10 build breaks (analyzer/API changes) minimally.
-Gate: \`dotnet build AspireStrapi.sln\` succeeds on net10 AND \`npm install\` clean. Commit.
-Notes: list any packages you could NOT bump and why.`)
+2. Bump Aspire.* and StrawberryShake.* to latest stable; bump all other NuGet to latest stable compatible with net10 (\`dotnet list package --outdated\`). Also resolve the OpenTelemetry.Exporter.OpenTelemetryProtocol NU1902 vulnerability warning by bumping to a patched version.
+3. In Backend/backend-blog get \`npm install\` clean, then \`npm update\`; ensure @strapi/plugin-graphql matches the @strapi/strapi 5.x version.
+Gate: \`dotnet build AspireStrapi.sln\` succeeds on net10 (including StrawberryShake codegen) AND \`npm install\` completes without ERESOLVE. Commit.
+Notes: list any packages you could NOT bump and why, and which option you used for issue (C) and (D).`)
 
 // ---- Phase 3: Hexagonal architecture ---------------------------------------
 phase('Hexagonal')

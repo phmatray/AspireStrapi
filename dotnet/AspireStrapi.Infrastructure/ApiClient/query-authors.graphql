@@ -1,0 +1,24 @@
+query GetAuthors {
+  authors(sort: ["name:asc"]) {
+    documentId
+    name
+    email
+    avatar {
+      url
+    }
+    articles(sort: ["publishedAt:desc"]) {
+      documentId
+      title
+      description
+      slug
+      publishedAt
+      cover {
+        url
+      }
+      category {
+        name
+        slug
+      }
+    }
+  }
+}

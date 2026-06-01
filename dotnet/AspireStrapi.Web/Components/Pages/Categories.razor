@@ -1,0 +1,154 @@
+@page "/categories"
+@rendermode InteractiveServer
+@inject IContentService ContentService
+@inject NavigationManager Navigation
+
+<PageTitle>Categories · The Headless Press</PageTitle>
+
+<PageMasthead Kicker="The desks" Title="Categories">
+    Browse the topics defined in Strapi. Pick a desk to filter the stories below.
+</PageMasthead>
+
+<section class="mx-auto max-w-6xl px-6 pb-10">
+@if (_categoriesState == LoadState.Loading)
+{
+    <LoadingIndicator Message="Loading categories from Strapi…" />
+}
+else if (_categoriesState == LoadState.Error)
+{
+    <ErrorAlert OnRetry="LoadCategoriesAsync" />
+}
+else if (_categories is { Count: 0 })
+{
+    <EmptyNote>No categories have been created yet.</EmptyNote>
+}
+else
+{
+    <ul class="flex flex-wrap gap-3" role="list">
+        <li>
+            <button type="button"
+                    class="chip @(SelectedSlug is null ? "chip--active" : "")"
+                    aria-pressed="@(SelectedSlug is null)"
+                    @onclick="ClearFilter">
+                All
+            </button>
+        </li>
+        @foreach (CategoryDto category in _categories!)
+        {
+            <li>
+                <button type="button"
+                        class="chip @(SelectedSlug == category.Slug ? "chip--active" : "")"
+                        aria-pressed="@(SelectedSlug == category.Slug)"
+                        @onclick="() => SelectCategory(category)">
+                    @category.Name
+                    <span class="chip__count">@category.ArticleCount</span>
+                </button>
+            </li>
+        }
+    </ul>
+
+    <section class="mt-12" aria-live="polite">
+        <h2 class="font-display text-3xl font-semibold mb-8">
+            @(_selectedCategory is null ? "All articles" : $"The {_selectedCategory.Name} desk")
+        </h2>
+
+        @if (_articlesState == LoadState.Loading)
+        {
+            <LoadingIndicator Message="Loading articles…" />
+        }
+        else if (_articlesState == LoadState.Error)
+        {
+            <ErrorAlert OnRetry="LoadArticlesAsync" />
+        }
+        else if (_articles is { Count: 0 })
+        {
+            <EmptyNote>No articles on this desk yet.</EmptyNote>
+        }
+        else
+        {
+            <div class="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach (ArticleDto article in _articles!)
+                {
+                    <ArticleCard Article="article" />
+                }
+            </div>
+        }
+    </section>
+}
+</section>
+
+@code {
+    private enum LoadState { Loading, Loaded, Error }
+
+    [SupplyParameterFromQuery(Name = "slug")]
+    public string? SelectedSlug { get; set; }
+
+    private IReadOnlyList<CategoryDto>? _categories;
+    private IReadOnlyList<ArticleDto>? _articles;
+    private CategoryDto? _selectedCategory;
+    private LoadState _categoriesState = LoadState.Loading;
+    private LoadState _articlesState = LoadState.Loading;
+    private string? _loadedSlug;
+    private bool _initialized;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategoriesAsync();
+        await ApplyFilterAsync();
+        _initialized = true;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // React to in-page filter changes once the first load has completed.
+        if (_initialized && _loadedSlug != SelectedSlug)
+        {
+            await ApplyFilterAsync();
+        }
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        _categoriesState = LoadState.Loading;
+        try
+        {
+            _categories = await ContentService.GetCategoriesAsync();
+            _categoriesState = LoadState.Loaded;
+        }
+        catch
+        {
+            _categoriesState = LoadState.Error;
+        }
+    }
+
+    private Task ApplyFilterAsync()
+    {
+        _loadedSlug = SelectedSlug;
+        _selectedCategory = _categories?.FirstOrDefault(c => c.Slug == SelectedSlug);
+        return LoadArticlesAsync();
+    }
+
+    private async Task LoadArticlesAsync()
+    {
+        _articlesState = LoadState.Loading;
+        try
+        {
+            _articles = string.IsNullOrWhiteSpace(SelectedSlug)
+                ? await ContentService.GetArticlesAsync()
+                : await ContentService.GetArticlesByCategoryAsync(SelectedSlug);
+            _articlesState = LoadState.Loaded;
+        }
+        catch
+        {
+            _articlesState = LoadState.Error;
+        }
+    }
+
+    private void SelectCategory(CategoryDto category) =>
+        Navigation.NavigateTo(
+            string.IsNullOrWhiteSpace(category.Slug)
+                ? "/categories"
+                : $"/categories?slug={Uri.EscapeDataString(category.Slug)}");
+
+    private void ClearFilter() => Navigation.NavigateTo("/categories");
+}

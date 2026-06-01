@@ -1,0 +1,101 @@
+services:
+  compose-dashboard:
+    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
+    ports:
+      - "18888"
+    expose:
+      - "18889"
+      - "18890"
+    networks:
+      - "aspire"
+    restart: "always"
+  postgres:
+    image: "docker.io/library/postgres:17.6"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      POSTGRES_USER: "${POSTGRES_USERNAME}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - type: "volume"
+        target: "/var/lib/postgresql/data"
+        source: "aspirestrapi-pgdata"
+        read_only: false
+    networks:
+      - "aspire"
+    restart: "unless-stopped"
+  strapi:
+    image: "${STRAPI_IMAGE}"
+    build:
+      context: "../../../cms"
+      dockerfile: "Dockerfile"
+    environment:
+      ConnectionStrings__strapidb: "Host=postgres;Port=5432;Username=${POSTGRES_USERNAME};Password=${POSTGRES_PASSWORD};Database=strapi"
+      STRAPIDB_HOST: "postgres"
+      STRAPIDB_PORT: "5432"
+      STRAPIDB_USERNAME: "${POSTGRES_USERNAME}"
+      STRAPIDB_PASSWORD: "${POSTGRES_PASSWORD}"
+      STRAPIDB_URI: "postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres:5432/strapi"
+      STRAPIDB_JDBCCONNECTIONSTRING: "jdbc:postgresql://postgres:5432/strapi"
+      STRAPIDB_DATABASENAME: "strapi"
+      HOST: "0.0.0.0"
+      PORT: "1337"
+      NODE_ENV: "production"
+      DATABASE_CLIENT: "postgres"
+      DATABASE_HOST: "postgres"
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: "strapi"
+      DATABASE_USERNAME: "${POSTGRES_USERNAME}"
+      DATABASE_PASSWORD: "${POSTGRES_PASSWORD}"
+      DATABASE_SSL: "false"
+      APP_KEYS: "${STRAPI_APP_KEYS}"
+      API_TOKEN_SALT: "${STRAPI_API_TOKEN_SALT}"
+      ADMIN_JWT_SECRET: "${STRAPI_ADMIN_JWT_SECRET}"
+      TRANSFER_TOKEN_SALT: "${STRAPI_TRANSFER_TOKEN_SALT}"
+      JWT_SECRET: "${STRAPI_JWT_SECRET}"
+      ENCRYPTION_KEY: "${STRAPI_ENCRYPTION_KEY}"
+    ports:
+      - "1337:1337"
+    depends_on:
+      postgres:
+        condition: "service_started"
+    volumes:
+      - type: "volume"
+        target: "/opt/app/public/uploads"
+        source: "aspirestrapi-uploads"
+        read_only: false
+    networks:
+      - "aspire"
+    restart: "unless-stopped"
+  frontend-blog:
+    image: "${FRONTEND_BLOG_IMAGE}"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      HTTP_PORTS: "${FRONTEND_BLOG_PORT}"
+      STRAPI_HTTP: "http://strapi:1337"
+      services__strapi__http__0: "http://strapi:1337"
+      Strapi__GraphQlEndpoint: "http://strapi:1337/graphql"
+      Strapi__PublicBaseUrl: "http://127.0.0.1:1337"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_SERVICE_NAME: "frontend-blog"
+    ports:
+      - "8090:${FRONTEND_BLOG_PORT}"
+      - "${FRONTEND_BLOG_PORT}"
+    depends_on:
+      strapi:
+        condition: "service_started"
+    networks:
+      - "aspire"
+    restart: "unless-stopped"
+networks:
+  aspire:
+    driver: "bridge"
+volumes:
+  aspirestrapi-pgdata:
+    driver: "local"
+  aspirestrapi-uploads:
+    driver: "local"

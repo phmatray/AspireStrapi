@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AspireStrapi.ServiceDefaults\AspireStrapi.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\AspireStrapi.Application\AspireStrapi.Application.csproj" />
+      <ProjectReference Include="..\AspireStrapi.Infrastructure\AspireStrapi.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

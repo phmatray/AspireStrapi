@@ -1,0 +1,20 @@
+@* Accessible error state with an optional retry action. *@
+<div class="border border-vermilion bg-vermilion/5 p-7" role="alert">
+    <p class="kicker kicker--plain text-vermilion">Stop the press</p>
+    <p class="font-display text-2xl font-semibold mt-2">Couldn't load this content.</p>
+    <p class="mt-2 text-ink-soft max-w-prose">@Message</p>
+    @if (OnRetry.HasDelegate)
+    {
+        <button type="button" class="btn-ghost mt-5" @onclick="OnRetry">Try again</button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Message { get; set; } =
+        "The Strapi GraphQL API may be starting up or unreachable. Make sure the Strapi service is running, then retry.";
+
+    /// <summary>Optional callback that re-runs the failed fetch.</summary>
+    [Parameter]
+    public EventCallback OnRetry { get; set; }
+}

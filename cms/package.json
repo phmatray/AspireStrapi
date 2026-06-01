@@ -1,0 +1,40 @@
+{
+  "dependencies": {
+    "@strapi/plugin-graphql": "5.47.0",
+    "fs-extra": "^11.0.0",
+    "lodash.set": "^4.3.2",
+    "mime-types": "^3.0.0",
+    "@strapi/strapi": "5.47.0",
+    "@strapi/plugin-users-permissions": "5.47.0",
+    "@strapi/plugin-cloud": "5.47.0",
+    "better-sqlite3": "12.10.0",
+    "pg": "8.13.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.30.3",
+    "styled-components": "^6.0.0"
+  },
+  "name": "cms",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A Strapi application",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi"
+  },
+  "devDependencies": {},
+  "author": {
+    "name": "A Strapi developer"
+  },
+  "strapi": {
+    "uuid": "729e51fd-f906-495b-8c43-ad0595a577df",
+    "template": "@strapi/template-blog"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=24.16.0",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}

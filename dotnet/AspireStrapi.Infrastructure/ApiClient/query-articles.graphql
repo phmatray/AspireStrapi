@@ -1,0 +1,74 @@
+query GetArticles {
+  articles(sort: ["publishedAt:desc"]) {
+    documentId
+    title
+    description
+    slug
+    publishedAt
+    cover {
+      url
+    }
+    category {
+      name
+      slug
+    }
+    author {
+      name
+      email
+      avatar {
+        url
+      }
+    }
+  }
+}
+
+query GetArticlesByCategory($slug: String!) {
+  articles(
+    sort: ["publishedAt:desc"]
+    filters: { category: { slug: { eq: $slug } } }
+  ) {
+    documentId
+    title
+    description
+    slug
+    publishedAt
+    cover {
+      url
+    }
+    category {
+      name
+      slug
+    }
+    author {
+      name
+      email
+      avatar {
+        url
+      }
+    }
+  }
+}
+
+query GetArticleById($documentId: ID!) {
+  articles(filters: { documentId: { eq: $documentId } }) {
+    documentId
+    title
+    description
+    slug
+    publishedAt
+    cover {
+      url
+    }
+    category {
+      name
+      slug
+    }
+    author {
+      name
+      email
+      avatar {
+        url
+      }
+    }
+  }
+}

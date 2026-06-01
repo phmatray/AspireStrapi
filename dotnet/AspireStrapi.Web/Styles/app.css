@@ -1,0 +1,362 @@
+@import "tailwindcss";
+
+/* Scan Razor markup for utility classes (Blazor doesn't live under the default roots). */
+@source "../Components/**/*.razor";
+@source "../**/*.{razor,html,cs}";
+
+/* ──────────────────────────────────────────────────────────────────────────
+   THE HEADLESS PRESS — an editorial design system
+   Warm paper · ink black · a single vermilion accent
+   Fraunces (display) · Newsreader (reading) · Archivo (labels)
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-paper: #f4eedf;
+  --color-paper-soft: #efe7d4;
+  --color-paper-deep: #e8dec7;
+  --color-ink: #1a1611;
+  --color-ink-soft: #4c4438;
+  --color-ink-faint: #8c8270;
+  --color-line: #d8ccae;
+  --color-vermilion: #cf3a10;
+  --color-vermilion-deep: #a82c08;
+  --color-gold: #b8923f;
+
+  --font-display: "Fraunces", "Times New Roman", serif;
+  --font-body: "Newsreader", Georgia, serif;
+  --font-label: "Archivo", "Helvetica Neue", sans-serif;
+
+  --shadow-plate: 0 1px 0 rgba(26, 22, 17, 0.04), 0 18px 40px -24px rgba(26, 22, 17, 0.45);
+  --shadow-lift: 0 30px 60px -32px rgba(26, 22, 17, 0.55);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ───────────────────────── base ───────────────────────── */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-optical-sizing: auto;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-vermilion);
+    color: var(--color-paper);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+
+  a { color: inherit; }
+
+  /* Thin focus ring that fits the paper aesthetic */
+  :focus-visible {
+    outline: 2px solid var(--color-vermilion);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* ─────────────────────── components ─────────────────────── */
+@layer components {
+
+  /* Paper grain — a faint fibrous texture laid over everything */
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  }
+
+  /* The eyebrow / kicker label that opens most sections */
+  .kicker {
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-vermilion);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .kicker::before {
+    content: "";
+    width: 1.6rem;
+    height: 1px;
+    background: var(--color-vermilion);
+  }
+  .kicker--plain::before { display: none; }
+
+  /* Small sans label for metadata (dates, counts, bylines) */
+  .meta {
+    font-family: var(--font-label);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  /* Masthead navigation link with a vermilion underline that wipes in */
+  .nav-link {
+    font-family: var(--font-label);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    position: relative;
+    padding-block: 0.25rem;
+    transition: color 0.3s var(--ease-out-expo);
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 100%;
+    background: var(--color-vermilion);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+  .nav-link:hover { color: var(--color-ink); }
+  .nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
+  .nav-link.active { color: var(--color-ink); }
+  .nav-link.active::after { transform: scaleX(1); }
+
+  /* Inline reading link — vermilion with an animated underline */
+  .ink-link {
+    color: var(--color-vermilion-deep);
+    text-decoration: none;
+    background-image: linear-gradient(var(--color-vermilion), var(--color-vermilion));
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-out-expo);
+  }
+  .ink-link:hover { background-size: 100% 1px; }
+
+  /* The headline link on a card: vermilion wipe under the title on hover */
+  .title-link {
+    background-image: linear-gradient(var(--color-vermilion), var(--color-vermilion));
+    background-size: 0% 2px;
+    background-position: 0 92%;
+    background-repeat: no-repeat;
+    transition: background-size 0.45s var(--ease-out-expo);
+  }
+  .group:hover .title-link,
+  .title-link:hover { background-size: 100% 2px; }
+
+  /* A category tag — boxed small-caps label */
+  .tag {
+    font-family: var(--font-label);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-vermilion-deep);
+    border: 1px solid var(--color-vermilion);
+    border-radius: 999px;
+    padding: 0.22rem 0.7rem 0.18rem;
+    display: inline-block;
+    line-height: 1;
+    transition: background 0.3s var(--ease-out-expo), color 0.3s var(--ease-out-expo);
+  }
+  a.tag:hover { background: var(--color-vermilion); color: var(--color-paper); }
+
+  /* Filter chip (categories page) */
+  .chip {
+    font-family: var(--font-label);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    border: 1px solid var(--color-line);
+    background: transparent;
+    border-radius: 999px;
+    padding: 0.5rem 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-expo);
+  }
+  .chip:hover { border-color: var(--color-ink); color: var(--color-ink); }
+  .chip__count {
+    font-size: 0.64rem;
+    color: var(--color-ink-faint);
+    border-left: 1px solid var(--color-line);
+    padding-left: 0.5rem;
+  }
+  .chip--active {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .chip--active .chip__count { color: var(--color-paper-deep); border-color: rgba(244,238,223,0.3); }
+
+  /* Buttons */
+  .btn-ink {
+    font-family: var(--font-label);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    padding: 0.85rem 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid var(--color-ink);
+    transition: all 0.35s var(--ease-out-expo);
+  }
+  .btn-ink:hover { background: var(--color-vermilion); border-color: var(--color-vermilion); transform: translateY(-2px); }
+
+  .btn-ghost {
+    font-family: var(--font-label);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    padding: 0.85rem 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid var(--color-ink);
+    transition: all 0.35s var(--ease-out-expo);
+  }
+  .btn-ghost:hover { background: var(--color-ink); color: var(--color-paper); transform: translateY(-2px); }
+
+  /* Cover image frame with slow zoom on hover */
+  .cover {
+    overflow: hidden;
+    background: var(--color-paper-deep);
+    position: relative;
+  }
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease-out-expo), filter 0.9s var(--ease-out-expo);
+    filter: saturate(0.92) contrast(1.02);
+  }
+  .group:hover .cover img { transform: scale(1.05); filter: saturate(1.05) contrast(1.03); }
+
+  .cover--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 12px, rgba(26,22,17,0.04) 12px 24px),
+      var(--color-paper-deep);
+    color: var(--color-ink-faint);
+    font-family: var(--font-display);
+  }
+
+  /* Hairline rule */
+  .rule { height: 1px; background: var(--color-line); border: 0; }
+
+  /* Drop cap for the article body's first paragraph */
+  .article-body > p:first-of-type::first-letter {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 4.4rem;
+    line-height: 0.78;
+    float: left;
+    padding: 0.35rem 0.7rem 0 0;
+    color: var(--color-vermilion);
+  }
+
+  /* Editorial prose for the markdown body injected from Strapi */
+  .article-body { font-size: 1.18rem; line-height: 1.75; color: #2a241c; }
+  .article-body > * + * { margin-top: 1.4rem; }
+  .article-body h2 {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    margin-top: 2.6rem;
+    line-height: 1.1;
+  }
+  .article-body h3 { font-size: 1.4rem; margin-top: 2rem; }
+  .article-body a { color: var(--color-vermilion-deep); text-decoration: underline; text-underline-offset: 3px; }
+  .article-body ul, .article-body ol { padding-left: 1.4rem; }
+  .article-body ul { list-style: none; }
+  .article-body ul > li { position: relative; padding-left: 1.2rem; margin-top: 0.5rem; }
+  .article-body ul > li::before {
+    content: "";
+    position: absolute; left: 0; top: 0.7em;
+    width: 0.5rem; height: 0.5rem;
+    background: var(--color-vermilion);
+    transform: rotate(45deg);
+  }
+  .article-body ol { list-style: decimal; }
+  .article-body ol > li { margin-top: 0.5rem; padding-left: 0.3rem; }
+  .article-body blockquote {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    font-style: italic;
+    line-height: 1.35;
+    color: var(--color-ink);
+    border-left: 3px solid var(--color-vermilion);
+    padding: 0.4rem 0 0.4rem 1.6rem;
+    margin-block: 2.2rem;
+  }
+  .article-body blockquote strong { display: block; font-style: normal; font-size: 0.8rem; font-family: var(--font-label); letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ink-faint); margin-top: 0.8rem; }
+  .article-body img { width: 100%; margin-block: 2.2rem; box-shadow: var(--shadow-plate); }
+  .article-body code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.86em;
+    background: var(--color-paper-deep);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+}
+
+/* ─────────────────────── motion ─────────────────────── */
+@layer utilities {
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes wipe {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  .rise {
+    opacity: 0;
+    animation: rise 0.9s var(--ease-out-expo) forwards;
+  }
+  .d-1 { animation-delay: 0.08s; }
+  .d-2 { animation-delay: 0.16s; }
+  .d-3 { animation-delay: 0.24s; }
+  .d-4 { animation-delay: 0.32s; }
+  .d-5 { animation-delay: 0.40s; }
+  .d-6 { animation-delay: 0.48s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rise { animation: none; opacity: 1; }
+    *, *::before, *::after { transition: none !important; }
+  }
+}

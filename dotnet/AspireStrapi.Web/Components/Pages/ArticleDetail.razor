@@ -1,0 +1,139 @@
+@page "/articles/{DocumentId}"
+@rendermode InteractiveServer
+@inject IContentService ContentService
+
+<PageTitle>@(_article?.Title ?? "Article") · The Headless Press</PageTitle>
+
+<div class="mx-auto max-w-3xl px-6 pt-12">
+    <a href="/articles" class="meta hover:text-vermilion transition-colors">&larr;&nbsp;&nbsp;Back to the folio</a>
+</div>
+
+@if (_state == LoadState.Loading)
+{
+    <div class="mx-auto max-w-3xl px-6"><LoadingIndicator Message="Loading the article from Strapi…" /></div>
+}
+else if (_state == LoadState.Error)
+{
+    <div class="mx-auto max-w-3xl px-6 py-10"><ErrorAlert OnRetry="LoadAsync" /></div>
+}
+else if (_state == LoadState.NotFound || _article is null)
+{
+    <div class="mx-auto max-w-3xl px-6 py-10">
+        <EmptyNote>
+            <strong>Article not found.</strong> It may have been unpublished or deleted in the
+            <a class="ink-link" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
+        </EmptyNote>
+    </div>
+}
+else
+{
+    <article class="pb-8">
+        <header class="mx-auto max-w-3xl px-6 pt-8 text-center">
+            @if (!string.IsNullOrWhiteSpace(_article.CategoryName))
+            {
+                <a href="@CategoryUrl" class="tag">@_article.CategoryName</a>
+            }
+
+            <h1 class="mt-6 font-display font-semibold tracking-tight leading-[1.02] text-[clamp(2.4rem,6vw,4.5rem)]">@_article.Title</h1>
+
+            @if (!string.IsNullOrWhiteSpace(_article.Description))
+            {
+                <p class="mt-6 font-display italic text-2xl leading-snug text-ink-soft max-w-2xl mx-auto">@_article.Description</p>
+            }
+
+            <div class="mt-8 flex items-center justify-center gap-3">
+                @if (!string.IsNullOrWhiteSpace(_article.AuthorAvatarUrl))
+                {
+                    <img src="@_article.AuthorAvatarUrl" class="w-10 h-10 rounded-full object-cover grayscale" alt="" loading="lazy" />
+                }
+                <span class="meta normal-case tracking-wide text-[0.85rem] text-ink-soft">
+                    @if (!string.IsNullOrWhiteSpace(_article.AuthorName))
+                    {
+                        <span>By <span class="text-ink">@_article.AuthorName</span></span>
+                    }
+                    @if (_article.PublishedAt is { } published)
+                    {
+                        <span> · <time datetime="@published.ToString("yyyy-MM-dd")">@published.ToString("MMMM d, yyyy")</time></span>
+                    }
+                </span>
+            </div>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(_article.CoverImageUrl))
+        {
+            <figure class="mx-auto max-w-4xl px-6 mt-12">
+                <div class="cover aspect-[16/9]"><img src="@_article.CoverImageUrl" alt="@($"Cover image for {_article.Title}")" /></div>
+            </figure>
+        }
+
+        <div class="article-body mx-auto max-w-2xl px-6 mt-14">
+            @if (!string.IsNullOrWhiteSpace(_article.BodyHtml))
+            {
+                @((MarkupString)_article.BodyHtml)
+            }
+            else if (!string.IsNullOrWhiteSpace(_article.Description))
+            {
+                <p>@_article.Description</p>
+            }
+            else
+            {
+                <p class="text-ink-faint italic">This article has no body content yet.</p>
+            }
+        </div>
+
+        @if (_article.Tags.Count > 0)
+        {
+            <footer class="mx-auto max-w-2xl px-6 mt-14 pt-8 border-t border-line">
+                <p class="kicker kicker--plain mb-3">Filed under</p>
+                <ul class="flex flex-wrap gap-2" role="list">
+                    @foreach (string tag in _article.Tags)
+                    {
+                        <li><span class="tag">#@tag</span></li>
+                    }
+                </ul>
+            </footer>
+        }
+    </article>
+}
+
+@code {
+    private enum LoadState { Loading, Loaded, NotFound, Error }
+
+    [Parameter]
+    public string DocumentId { get; set; } = string.Empty;
+
+    private ArticleDetailDto? _article;
+    private LoadState _state = LoadState.Loading;
+
+    private string CategoryUrl =>
+        string.IsNullOrWhiteSpace(_article?.CategorySlug)
+            ? "/categories"
+            : $"/categories?slug={Uri.EscapeDataString(_article!.CategorySlug!)}";
+
+    private string? _loadedId;
+
+    // OnParametersSetAsync fires on first render and on every route-param change,
+    // so it is the single load trigger (avoids a duplicate fetch from OnInitialized).
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_loadedId != DocumentId)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        _state = LoadState.Loading;
+        _loadedId = DocumentId;
+        try
+        {
+            _article = await ContentService.GetArticleAsync(DocumentId);
+            _state = _article is null ? LoadState.NotFound : LoadState.Loaded;
+        }
+        catch
+        {
+            _state = LoadState.Error;
+        }
+    }
+}

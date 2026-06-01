@@ -1,0 +1,13 @@
+{
+  "name": "aspirestrapi-web-styles",
+  "private": true,
+  "description": "Tailwind CSS build for the AspireStrapi Blazor frontend. The built file wwwroot/css/app.css is committed so the container image (dotnet publish, no Node) serves it without a Node build step.",
+  "scripts": {
+    "build:css": "tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css --minify",
+    "watch:css": "tailwindcss -i ./Styles/app.css -o ./wwwroot/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}

@@ -1,6 +1,0 @@
-.cache/
-.git/
-build/
-node_modules/
-.env
-backup/

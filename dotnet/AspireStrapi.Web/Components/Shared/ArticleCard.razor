@@ -1,0 +1,56 @@
+@* A summary card for one article, reused across the list, category and author pages. *@
+<article class="group flex flex-col h-full">
+    @if (!string.IsNullOrWhiteSpace(Article.CoverImageUrl))
+    {
+        <a href="@DetailUrl" class="cover aspect-[4/3] block mb-5" tabindex="-1" aria-hidden="true">
+            <img src="@Article.CoverImageUrl" alt="" loading="lazy" />
+        </a>
+    }
+    else
+    {
+        <div class="cover cover--placeholder aspect-[4/3] mb-5 text-4xl" aria-hidden="true">✦</div>
+    }
+
+    <div class="flex flex-col flex-1">
+        <div class="flex items-center gap-3 mb-3">
+            @if (!string.IsNullOrWhiteSpace(Article.CategoryName))
+            {
+                <span class="tag">@Article.CategoryName</span>
+            }
+            @if (Article.PublishedAt is { } published)
+            {
+                <time class="meta" datetime="@published.ToString("yyyy-MM-dd")">@published.ToString("MMM d, yyyy")</time>
+            }
+        </div>
+
+        <h3 class="font-display text-[1.55rem] leading-[1.12] font-semibold">
+            <a href="@DetailUrl" class="title-link">@Article.Title</a>
+        </h3>
+
+        @if (!string.IsNullOrWhiteSpace(Article.Description))
+        {
+            <p class="mt-3 text-ink-soft leading-relaxed flex-1">@Article.Description</p>
+        }
+
+        <div class="mt-5 pt-4 border-t border-line flex items-center gap-3">
+            @if (!string.IsNullOrWhiteSpace(Article.AuthorAvatarUrl))
+            {
+                <img src="@Article.AuthorAvatarUrl" class="w-8 h-8 rounded-full object-cover grayscale" alt="" loading="lazy" />
+            }
+            <span class="meta normal-case tracking-normal text-[0.82rem] text-ink-soft">
+                @if (!string.IsNullOrWhiteSpace(Article.AuthorName))
+                {
+                    <span>By @Article.AuthorName</span>
+                }
+            </span>
+            <span class="ml-auto font-label text-xs tracking-widest uppercase text-vermilion opacity-0 -translate-x-1 transition-all duration-400 group-hover:opacity-100 group-hover:translate-x-0">Read&nbsp;→</span>
+        </div>
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public ArticleDto Article { get; set; } = default!;
+
+    private string DetailUrl => $"/articles/{Article.Id}";
+}

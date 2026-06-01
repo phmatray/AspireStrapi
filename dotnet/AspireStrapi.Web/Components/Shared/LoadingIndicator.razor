@@ -1,0 +1,14 @@
+@* Accessible loading state used by every async page. *@
+<div class="flex items-center gap-4 py-16" role="status" aria-live="polite">
+    <span class="relative flex h-3 w-3" aria-hidden="true">
+        <span class="absolute inline-flex h-full w-full rounded-full bg-vermilion opacity-60 animate-ping"></span>
+        <span class="relative inline-flex h-3 w-3 rounded-full bg-vermilion"></span>
+    </span>
+    <span class="meta normal-case tracking-[0.18em] text-ink-soft">@Message</span>
+</div>
+
+@code {
+    /// <summary>The text announced to assistive technology while loading.</summary>
+    [Parameter]
+    public string Message { get; set; } = "Setting type from Strapi…";
+}

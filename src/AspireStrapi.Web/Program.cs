@@ -11,7 +11,13 @@ builder.AddServiceDefaults();
 builder.Services.AddApplication();
 
 // Add the Strapi GraphQL adapter and the driven-port implementations.
-builder.Services.AddStrapiInfrastructure(new Uri("http://strapi-api-dev/graphql"));
+// The endpoint defaults to the Aspire executable name used at dev time, but can
+// be overridden via configuration (e.g. the Strapi__GraphQlEndpoint env var the
+// Docker Compose deployment injects so the Web container can reach the Strapi
+// service by its compose service name).
+var strapiGraphQlEndpoint = builder.Configuration["Strapi:GraphQlEndpoint"]
+    ?? "http://strapi-api-dev/graphql";
+builder.Services.AddStrapiInfrastructure(new Uri(strapiGraphQlEndpoint));
 
 // Add RazorComponents services to the container.
 builder.Services.AddRazorComponents()

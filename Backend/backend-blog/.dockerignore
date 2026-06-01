@@ -1,6 +1,10 @@
 .cache/
 .git/
 build/
+dist/
 node_modules/
 .env
 backup/
+.tmp/
+.strapi/
+*.log

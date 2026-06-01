@@ -1,30 +1,90 @@
-using Microsoft.Extensions.Hosting;
+using Aspire.Hosting;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// builder.AddPostgresContainer("db")
-//     .AddDatabase("strapi");
+// ---------------------------------------------------------------------------
+// Docker Compose compute environment.
+// `aspire publish` uses this to emit a docker-compose.yml + .env that can be
+// deployed on any Docker host (here: OrbStack).
+// ---------------------------------------------------------------------------
+var compose = builder.AddDockerComposeEnvironment("compose");
 
+// ---------------------------------------------------------------------------
+// Strapi secrets (the keys Strapi requires to boot in production). Declared as
+// parameters with default values so they flow into the generated .env file.
+// ---------------------------------------------------------------------------
+var appKeys = builder.AddParameter("strapi-app-keys", "FO7XR1+fPZ2EY6Oc12fizA==,oB6b+m7JHXkrUfn3rKCe2Q==");
+var apiTokenSalt = builder.AddParameter("strapi-api-token-salt", "X2i3Po24w8EDsBj7QHktaw==");
+var adminJwtSecret = builder.AddParameter("strapi-admin-jwt-secret", "yt+WWFQLKJWVA0mGh9brCw==", secret: true);
+var transferTokenSalt = builder.AddParameter("strapi-transfer-token-salt", "mLCJ555V4lmm5SD8AXQeeA==");
+var jwtSecret = builder.AddParameter("strapi-jwt-secret", "8Lfnqf7tYZ8zx1z2r21CBQ==", secret: true);
+var encryptionKey = builder.AddParameter("strapi-encryption-key", "ovfPuQPxgP9ZMx5YxURZ6g==", secret: true);
+
+// Database credentials – declared explicitly so both Postgres and Strapi agree.
+var dbUser = builder.AddParameter("postgres-username", "strapi");
+var dbPassword = builder.AddParameter("postgres-password", "strapi", secret: true);
+
+// ---------------------------------------------------------------------------
+// PostgreSQL with a persistent data volume.
+// ---------------------------------------------------------------------------
+var postgres = builder
+    .AddPostgres("postgres", userName: dbUser, password: dbPassword)
+    .WithDataVolume("aspirestrapi-pgdata")
+    .PublishAsDockerComposeService((resource, service) =>
+    {
+        service.Name = "postgres";
+        service.Restart = "unless-stopped";
+    });
+
+var strapiDb = postgres.AddDatabase("strapidb", databaseName: "strapi");
+
+// ---------------------------------------------------------------------------
+// Strapi CMS – built from the Backend/backend-blog Dockerfile, backed by
+// Postgres, exposed on port 1337.
+// ---------------------------------------------------------------------------
 var strapi = builder
-    .AddExecutable(
-        name: "strapi-api-dev",
-        command: "npm",
-        workingDirectory: "../../Backend/backend-blog/",
-        args: ["run", "develop"])
-    .WithHttpEndpoint(port: 1337, name: "strapi-api-dev");
+    .AddDockerfile("strapi", "../../Backend/backend-blog")
+    .WithHttpEndpoint(targetPort: 1337, port: 1337, name: "http")
+    .WithExternalHttpEndpoints()
+    .WithReference(strapiDb)
+    .WaitFor(strapiDb)
+    .WithEnvironment("HOST", "0.0.0.0")
+    .WithEnvironment("PORT", "1337")
+    .WithEnvironment("NODE_ENV", "production")
+    .WithEnvironment("DATABASE_CLIENT", "postgres")
+    .WithEnvironment("DATABASE_HOST", postgres.Resource.PrimaryEndpoint.Property(EndpointProperty.Host))
+    .WithEnvironment("DATABASE_PORT", postgres.Resource.PrimaryEndpoint.Property(EndpointProperty.TargetPort))
+    .WithEnvironment("DATABASE_NAME", "strapi")
+    .WithEnvironment("DATABASE_USERNAME", dbUser)
+    .WithEnvironment("DATABASE_PASSWORD", dbPassword)
+    .WithEnvironment("DATABASE_SSL", "false")
+    .WithEnvironment("APP_KEYS", appKeys)
+    .WithEnvironment("API_TOKEN_SALT", apiTokenSalt)
+    .WithEnvironment("ADMIN_JWT_SECRET", adminJwtSecret)
+    .WithEnvironment("TRANSFER_TOKEN_SALT", transferTokenSalt)
+    .WithEnvironment("JWT_SECRET", jwtSecret)
+    .WithEnvironment("ENCRYPTION_KEY", encryptionKey)
+    .PublishAsDockerComposeService((resource, service) =>
+    {
+        service.Restart = "unless-stopped";
+    });
 
+// ---------------------------------------------------------------------------
+// Blazor web frontend – consumes Strapi's GraphQL endpoint.
+// ---------------------------------------------------------------------------
 builder
     .AddProject<AspireStrapi_Web>("frontend-blog")
-    .WithReference(strapi.GetEndpoint("strapi-api-dev"));
+    .WithExternalHttpEndpoints()
+    .WithReference(strapi.GetEndpoint("http"))
+    .WaitFor(strapi)
+    .WithEnvironment(
+        "Strapi__GraphQlEndpoint",
+        ReferenceExpression.Create($"{strapi.GetEndpoint("http")}/graphql"))
+    .PublishAsDockerComposeService((resource, service) =>
+    {
+        service.Name = "frontend-blog";
+        service.Restart = "unless-stopped";
+    });
 
 builder.Build().Run();
-
-// class StrapiExecutable : ExecutableResource
-// {
-//     public StrapiExecutable(string name, string command, string workingDirectory, string[]? args)
-//         : base(name, command, workingDirectory, args)
-//     {
-//     }
-//     
-// }

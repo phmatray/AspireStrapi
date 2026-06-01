@@ -164,11 +164,13 @@ Notes: print the resolved URLs/ports for Strapi admin, GraphQL, and the Blazor a
 // ---- Phase 7: Browser MCP verification --------------------------------------
 results.verify = await runPhase('Verify', `
 Smoke-test the running app with the chrome-devtools MCP tools (load their schemas via ToolSearch: "select:mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page,mcp__plugin_chrome-devtools-mcp_chrome-devtools__new_page,mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot,mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot,mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_console_messages,mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_network_requests").
-1. Open the Blazor app URL from the deploy phase notes.
-2. Assert the Articles list renders at least one article (snapshot the DOM).
-3. Navigate to an article detail page and assert the body + cover render.
-4. Check console messages for errors and network requests for failed (4xx/5xx) GraphQL calls.
-5. Take a screenshot of the articles list and the detail page; save paths under docs/.
+KNOWN-GOOD ENDPOINTS (this deployment): Blazor app = http://127.0.0.1:8090, Strapi = http://127.0.0.1:1337. Use 127.0.0.1, NOT localhost (localhost resolves to IPv6 ::1 and the containers only answer on IPv4). Note host port 8090 (not 8080) is intentional to avoid colliding with other local services such as an OrbStack k8s load-balancer.
+First confirm the stack is the AspireStrapi one (curl http://127.0.0.1:8090/ and check the page title is "Strapi headless CMS demo", not some other local app on the port). Seed content exists: 5 articles, 2 authors, 5 categories with cover images.
+1. Open http://127.0.0.1:8090/articles.
+2. Assert the Articles list renders all seeded articles (snapshot the DOM).
+3. Navigate to an article detail page (/articles/{documentId}) and assert the body + cover render (the body comes from the dynamic-zone blocks query).
+4. Check console messages for errors (cover/avatar images must load from http://127.0.0.1:1337/uploads/*, NOT file:// or strapi:1337) and network requests for failed (4xx/5xx) GraphQL calls (the body query must be 200, not 400).
+5. Take a screenshot of the articles list and the detail page; save under docs/verification/.
 Gate: articles render on list + detail AND there are no console errors and no failed GraphQL requests.
 Notes: if the browser MCP is unavailable in this run, set ok=false with a clear note so the supervising main loop can drive it.`)
 

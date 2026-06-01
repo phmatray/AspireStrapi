@@ -1,0 +1,16 @@
+@* The editorial header that opens each section page. *@
+<header class="mx-auto max-w-6xl px-6 pt-16 pb-10 md:pt-20">
+    <p class="kicker rise">@Kicker</p>
+    <h1 class="rise d-1 mt-5 font-display font-semibold tracking-tight leading-[0.95] text-[clamp(2.6rem,7vw,5rem)]">@Title<span class="text-vermilion">.</span></h1>
+    @if (ChildContent is not null)
+    {
+        <div class="rise d-2 mt-6 max-w-2xl text-xl leading-relaxed text-ink-soft">@ChildContent</div>
+    }
+    <hr class="rule mt-10"/>
+</header>
+
+@code {
+    [Parameter] public string Kicker { get; set; } = "The Headless Press";
+    [Parameter, EditorRequired] public string Title { get; set; } = default!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

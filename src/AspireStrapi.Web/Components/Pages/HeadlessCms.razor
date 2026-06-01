@@ -2,60 +2,58 @@
 @rendermode InteractiveServer
 @inject IContentService ContentService
 
-<PageTitle>How this works · Strapi CMS demo</PageTitle>
+<PageTitle>Colophon · The Headless Press</PageTitle>
 
-<header class="cms-page-header">
-    <p class="cms-eyebrow">Headless CMS demo</p>
-    <h1>How this app works</h1>
-    <p class="lead text-body-secondary">
-        A headless CMS owns the content; this app owns the presentation. The two talk over an API.
-    </p>
-</header>
+<PageMasthead Kicker="Colophon" Title="How this folio is made">
+    A headless CMS owns the content; this app owns the presentation. The two correspond over an API.
+</PageMasthead>
 
-<section class="cms-explainer">
-    <ol class="cms-flow" role="list">
-        <li class="cms-flow__step">
-            <h2 class="h5">1 · Authored in Strapi</h2>
-            <p>
-                Editors create and edit articles, categories and authors in the
-                <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
-                Strapi is the single source of truth for all content.
+<section class="mx-auto max-w-6xl px-6 pb-4">
+    <ol class="grid gap-px bg-line border border-line md:grid-cols-3" role="list">
+        <li class="bg-paper p-8">
+            <span class="font-display text-6xl font-semibold text-vermilion leading-none">1</span>
+            <h2 class="font-display text-xl font-semibold mt-4">Authored in Strapi</h2>
+            <p class="mt-3 text-ink-soft">
+                Editors compose articles, categories and authors in the
+                <a class="ink-link" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
+                Strapi is the single source of truth.
             </p>
         </li>
-        <li class="cms-flow__step">
-            <h2 class="h5">2 · Served over GraphQL</h2>
-            <p>
-                Strapi exposes that content through a GraphQL API. This Blazor app queries it through
-                an application <em>port</em>, so the UI never talks to Strapi directly — it depends only
-                on a clean use-case interface.
+        <li class="bg-paper p-8">
+            <span class="font-display text-6xl font-semibold text-vermilion leading-none">2</span>
+            <h2 class="font-display text-xl font-semibold mt-4">Served over GraphQL</h2>
+            <p class="mt-3 text-ink-soft">
+                Strapi exposes that content through a GraphQL API. Blazor queries it through an
+                application <em>port</em> — the UI never touches Strapi directly.
             </p>
         </li>
-        <li class="cms-flow__step">
-            <h2 class="h5">3 · Rendered live by Blazor</h2>
-            <p>
-                Each page fetches fresh data on load and renders it server-side with Blazor. Cover images
-                and avatars are streamed straight from Strapi's media library.
+        <li class="bg-paper p-8">
+            <span class="font-display text-6xl font-semibold text-vermilion leading-none">3</span>
+            <h2 class="font-display text-xl font-semibold mt-4">Set in type by Blazor</h2>
+            <p class="mt-3 text-ink-soft">
+                Each page fetches fresh data on load and renders it server-side. Covers and avatars
+                stream straight from Strapi's media library.
             </p>
         </li>
     </ol>
 
-    <div class="alert alert-success cms-live-note" role="note">
-        <h2 class="h6 mb-1">Editing in Strapi reflects here instantly</h2>
-        <p class="mb-0">
-            Because nothing is baked at build time, any change you publish in the Strapi admin shows up
-            the next time a page loads. Edit an article's title, swap a cover image, or add a new
-            category in
-            <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">http://localhost:1337/admin</a>,
-            then refresh <a href="/articles">Articles</a> — your change is already there. No redeploy, no rebuild.
+    <div class="mt-12 bg-ink text-paper p-10 md:p-14">
+        <p class="kicker kicker--plain text-vermilion">Live by design</p>
+        <h2 class="font-display text-3xl md:text-4xl font-semibold mt-3 max-w-2xl">Editing in Strapi reflects here instantly.</h2>
+        <p class="mt-4 max-w-2xl text-paper-deep leading-relaxed">
+            Nothing is baked at build time. Change a title, swap a cover, or add a category in the
+            <a class="underline decoration-vermilion underline-offset-4" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>,
+            then refresh <a class="underline decoration-vermilion underline-offset-4" href="/articles">Articles</a> — your change is already there. No redeploy, no rebuild.
         </p>
     </div>
 
-    <section class="cms-live-proof" aria-label="Live content check">
-        <h2 class="h5">Live content check</h2>
-        <p class="text-body-secondary">
-            The value below is fetched from Strapi right now to prove the connection is live:
+    <section class="mt-12 border border-line p-8 md:p-10" aria-label="Live content check">
+        <p class="kicker kicker--plain">Live content check</p>
+        <p class="mt-3 text-ink-soft max-w-xl">
+            The value below is fetched from Strapi right now, on this request, to prove the wire is live:
         </p>
 
+        <div class="mt-6">
         @if (_state == LoadState.Loading)
         {
             <LoadingIndicator Message="Fetching the About entry from Strapi…" />
@@ -66,25 +64,24 @@
         }
         else if (_about is null)
         {
-            <div class="alert alert-info" role="status">
-                No “About” entry exists in Strapi yet. Create one in the admin to see it appear here.
-            </div>
+            <EmptyNote>No “About” entry exists in Strapi yet. Create one in the admin to see it appear here.</EmptyNote>
         }
         else
         {
-            <figure class="cms-live-card">
-                <figcaption class="text-body-secondary small">About page title (live from Strapi)</figcaption>
-                <blockquote class="mb-0">
-                    <strong>@_about.Title</strong>
+            <figure class="bg-paper-soft border-l-2 border-vermilion pl-6 py-4">
+                <figcaption class="meta">About page title · live from Strapi</figcaption>
+                <blockquote class="font-display text-2xl font-semibold mt-2">
+                    @_about.Title
                     @if (_about.CreatedAt is { } created)
                     {
-                        <span class="d-block small text-body-secondary">
+                        <span class="block meta normal-case tracking-wide text-ink-faint mt-2">
                             created <time datetime="@created.ToString("yyyy-MM-dd")">@created.ToString("MMMM d, yyyy")</time>
                         </span>
                     }
                 </blockquote>
             </figure>
         }
+        </div>
     </section>
 </section>
 

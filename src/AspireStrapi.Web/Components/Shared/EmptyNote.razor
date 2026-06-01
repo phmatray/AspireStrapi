@@ -1,0 +1,10 @@
+@* A quiet, editorial "nothing here yet" notice. *@
+<div class="border border-line bg-paper-soft px-7 py-10 text-center" role="status">
+    <p class="font-display text-2xl text-ink-faint">❦</p>
+    <p class="mt-2 text-ink-soft max-w-md mx-auto">@ChildContent</p>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

@@ -1,41 +1,6 @@
-<div class="top-row ps-3 navbar navbar-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="">Strapi CMS demo</a>
-  </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-  <nav class="flex-column">
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-      </NavLink>
-    </div>
-
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="articles">
-        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Articles
-      </NavLink>
-    </div>
-
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="categories">
-        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Categories
-      </NavLink>
-    </div>
-
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="authors">
-        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Authors
-      </NavLink>
-    </div>
-
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="headless-cms">
-        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> How it works
-      </NavLink>
-    </div>
-  </nav>
-</div>
+<nav class="flex flex-wrap items-center justify-end gap-x-7 gap-y-1.5">
+    <NavLink class="nav-link" href="articles">Articles</NavLink>
+    <NavLink class="nav-link" href="categories">Categories</NavLink>
+    <NavLink class="nav-link" href="authors">Authors</NavLink>
+    <NavLink class="nav-link" href="headless-cms">Colophon</NavLink>
+</nav>

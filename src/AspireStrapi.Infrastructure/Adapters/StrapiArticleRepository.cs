@@ -1,5 +1,6 @@
 using AspireStrapi.Application.Ports;
 using AspireStrapi.Domain.Entities;
+using AspireStrapi.Domain.ValueObjects;
 using AspireStrapi.Infrastructure.ApiClient;
 using StrawberryShake;
 
@@ -27,30 +28,57 @@ public sealed class StrapiArticleRepository : IArticleRepository
 
         result.EnsureNoErrors();
 
-        IReadOnlyList<IGetArticles_Articles_Data>? data = result.Data?.Articles?.Data;
-        if (data is null)
+        // Strapi 5 flattened the GraphQL schema: `articles` is now a plain
+        // list of Article objects (no v4 `data`/`attributes` wrapping).
+        IReadOnlyList<IGetArticles_Articles?>? articles = result.Data?.Articles;
+        if (articles is null)
         {
             return [];
         }
 
-        return data
-            .Where(item => item.Attributes?.Title is not null)
-            .Select(MapToArticle)
+        return articles
+            .Where(item => item?.Title is not null)
+            .Select(item => MapToArticle(item!))
             .ToList();
     }
 
-    private static Article MapToArticle(IGetArticles_Articles_Data item)
+    private static Article MapToArticle(IGetArticles_Articles item)
     {
-        IGetArticles_Articles_Data_Attributes attributes = item.Attributes!;
-
         return new Article(
-            id: item.Id ?? Guid.NewGuid().ToString(),
-            title: attributes.Title!,
-            description: attributes.Description,
-            slug: null,
-            author: null,
-            category: null,
+            id: item.DocumentId,
+            title: item.Title!,
+            description: item.Description,
+            slug: MapSlug(item.Slug),
+            author: MapAuthor(item.Author),
+            category: MapCategory(item.Category),
             tags: null,
-            publishedAt: null);
+            publishedAt: item.PublishedAt);
+    }
+
+    private static Slug? MapSlug(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : new Slug(value);
+
+    private static Author? MapAuthor(IGetArticles_Articles_Author? author)
+    {
+        if (author?.Name is null)
+        {
+            return null;
+        }
+
+        EmailAddress? email = string.IsNullOrWhiteSpace(author.Email)
+            ? null
+            : new EmailAddress(author.Email);
+
+        return new Author(author.Name, email, author.Avatar?.Url);
+    }
+
+    private static Category? MapCategory(IGetArticles_Articles_Category? category)
+    {
+        if (category?.Name is null)
+        {
+            return null;
+        }
+
+        return new Category(category.Name, MapSlug(category.Slug));
     }
 }

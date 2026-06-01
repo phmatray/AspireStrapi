@@ -1,10 +1,7 @@
 query GetPageAbout {
   about {
-    data {
-      attributes {
-        title
-        createdAt
-      }
-    }
+    documentId
+    title
+    createdAt
   }
 }

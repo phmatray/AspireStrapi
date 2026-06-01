@@ -26,14 +26,15 @@ public sealed class StrapiAboutPageRepository : IAboutPageRepository
 
         result.EnsureNoErrors();
 
-        IGetPageAbout_About_Data_Attributes? attributes =
-            result.Data?.About?.Data?.Attributes;
+        // Strapi 5 flattened the GraphQL schema: `about` is now the About
+        // object directly (no v4 `data`/`attributes` wrapping).
+        IGetPageAbout_About? about = result.Data?.About;
 
-        if (attributes?.Title is null)
+        if (about?.Title is null)
         {
             return null;
         }
 
-        return new AboutPage(attributes.Title, attributes.CreatedAt);
+        return new AboutPage(about.Title, about.CreatedAt);
     }
 }

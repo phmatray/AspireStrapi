@@ -1,10 +1,22 @@
 query GetArticles {
   articles {
-    data {
-      id
-      attributes {
-        title
-        description
+    documentId
+    title
+    description
+    slug
+    publishedAt
+    cover {
+      url
+    }
+    category {
+      name
+      slug
+    }
+    author {
+      name
+      email
+      avatar {
+        url
       }
     }
   }

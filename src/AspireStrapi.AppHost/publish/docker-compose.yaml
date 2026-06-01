@@ -28,9 +28,6 @@ services:
     restart: "unless-stopped"
   strapi:
     image: "${STRAPI_IMAGE}"
-    build:
-      context: "../../../Backend/backend-blog"
-      dockerfile: "Dockerfile"
     environment:
       ConnectionStrings__strapidb: "Host=postgres;Port=5432;Username=${POSTGRES_USERNAME};Password=${POSTGRES_PASSWORD};Database=strapi"
       STRAPIDB_HOST: "postgres"
@@ -73,11 +70,13 @@ services:
       STRAPI_HTTP: "http://strapi:1337"
       services__strapi__http__0: "http://strapi:1337"
       Strapi__GraphQlEndpoint: "http://strapi:1337/graphql"
+      Strapi__PublicBaseUrl: "http://127.0.0.1:1337"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
       OTEL_SERVICE_NAME: "frontend-blog"
     ports:
-      - "8080:${FRONTEND_BLOG_PORT}"
+      - "8090:${FRONTEND_BLOG_PORT}"
+      - "${FRONTEND_BLOG_PORT}"
     depends_on:
       strapi:
         condition: "service_started"

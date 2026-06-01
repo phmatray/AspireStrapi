@@ -29,6 +29,9 @@ public sealed class StrapiArticleBodyClient
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
+        // camelCase on serialize so the request body is {"query":...,"variables":...}
+        // (GraphQL requires lowercase keys); case-insensitive on deserialize.
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true,
     };
 

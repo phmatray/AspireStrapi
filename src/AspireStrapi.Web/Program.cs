@@ -17,7 +17,14 @@ builder.Services.AddApplication();
 // service by its compose service name).
 var strapiGraphQlEndpoint = builder.Configuration["Strapi:GraphQlEndpoint"]
     ?? "http://strapi-api-dev/graphql";
-builder.Services.AddStrapiInfrastructure(new Uri(strapiGraphQlEndpoint));
+// Public, browser-reachable Strapi base URL used to build media (cover/avatar)
+// URLs. In Docker Compose the GraphQL host (strapi:1337) is only reachable
+// inside the network, so the deployment injects Strapi__PublicBaseUrl
+// (e.g. http://127.0.0.1:1337). Falls back to the GraphQL host for local dev.
+var strapiPublicBaseUrl = builder.Configuration["Strapi:PublicBaseUrl"];
+builder.Services.AddStrapiInfrastructure(
+    new Uri(strapiGraphQlEndpoint),
+    string.IsNullOrWhiteSpace(strapiPublicBaseUrl) ? null : new Uri(strapiPublicBaseUrl));
 
 // Add RazorComponents services to the container.
 builder.Services.AddRazorComponents()

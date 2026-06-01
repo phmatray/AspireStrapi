@@ -12,14 +12,16 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddStrapiInfrastructure(
         this IServiceCollection services,
-        Uri graphQlEndpoint)
+        Uri graphQlEndpoint,
+        Uri? mediaBaseUrl = null)
     {
         services
             .AddBlogClient()
             .ConfigureHttpClient(client => client.BaseAddress = graphQlEndpoint);
 
-        // Resolves Strapi's relative media URLs against the GraphQL host root.
-        services.AddSingleton(new StrapiMediaUrlResolver(graphQlEndpoint));
+        // Resolves Strapi's relative media URLs against a browser-reachable host.
+        // Falls back to the GraphQL host when no public media base URL is given.
+        services.AddSingleton(new StrapiMediaUrlResolver(mediaBaseUrl ?? graphQlEndpoint));
 
         // Raw GraphQL client used to fetch the article body (dynamic-zone union)
         // that the typed StrawberryShake client cannot model.

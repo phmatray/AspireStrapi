@@ -76,11 +76,18 @@ var strapi = builder
 builder
     .AddProject<AspireStrapi_Web>("frontend-blog")
     .WithExternalHttpEndpoints()
+    // Publish on host port 8090 to avoid colliding with other local services
+    // (e.g. an OrbStack k8s load-balancer) that commonly occupy 8080.
+    .WithEndpoint("http", endpoint => endpoint.Port = 8090)
     .WithReference(strapi.GetEndpoint("http"))
     .WaitFor(strapi)
     .WithEnvironment(
         "Strapi__GraphQlEndpoint",
         ReferenceExpression.Create($"{strapi.GetEndpoint("http")}/graphql"))
+    // Browser-reachable Strapi base URL for media (cover/avatar) links. Strapi
+    // is published on host port 1337 by the compose deployment, so the browser
+    // loads /uploads/* from here rather than the in-network strapi:1337 host.
+    .WithEnvironment("Strapi__PublicBaseUrl", "http://127.0.0.1:1337")
     .PublishAsDockerComposeService((resource, service) =>
     {
         service.Name = "frontend-blog";

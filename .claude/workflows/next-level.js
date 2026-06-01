@@ -37,7 +37,7 @@ Working directory is the AspireStrapi repo root. Rules:
 - Make focused commits ending with the Co-Authored-By trailer for "Claude Opus 4.8 (1M context) <noreply@anthropic.com>".
 - Do NOT push, open PRs, or merge to dev unless your phase explicitly says so.
 - Run the stated gate command and report its real output. Set ok=false (do not fake success) if it fails.
-- BUILD ENV: a .NET 9 runtime is installed side-by-side at ~/.dotnet (the system host at /usr/local/share/dotnet only has 8.x + 10.x). StrawberryShake's build-time codegen tool targets net9. ALWAYS export DOTNET_ROLL_FORWARD=LatestMajor before running dotnet build/restore so the net9 codegen tool rolls forward onto the net10 runtime. If a build still fails to find Microsoft.NETCore.App 9.0, prepend ~/.dotnet to DOTNET_ROOT/PATH as a fallback.
+- BUILD ENV: use StrawberryShake 16.x (its codegen ships net8/net9/net10 tool variants and runs natively on the installed net10 runtime — no roll-forward or extra runtime needed).
 - Return the structured status object as your final result.`
 
 // helper that runs one phase agent and halts the pipeline on a failed gate
@@ -89,7 +89,7 @@ ${results.baseline?.notes || 'n/a'}
 These four known issues MUST be resolved:
 (A) ServiceDefaults Extensions.cs: 'IHttpClientBuilder.UseServiceDiscovery' no longer exists in the newer Microsoft.Extensions.ServiceDiscovery — migrate to the current API (the AddServiceDiscovery on the service collection + the new http client wiring per the latest Aspire ServiceDefaults template). Regenerate ServiceDefaults from the current Aspire template shape if cleaner.
 (B) AppHost uses the DEPRECATED Aspire workload (NETSDK1228). Migrate to the NuGet-based Aspire app model per https://aka.ms/aspire/update-to-sdk: add the Aspire.AppHost.Sdk to the AppHost csproj, reference latest Aspire.Hosting.* from NuGet, remove workload reliance.
-(C) StrawberryShake build-time codegen (dotnet-graphql) targets net9 and fails because no .NET 9 runtime is installed (only 8.x + 10.x). Resolve by EITHER upgrading StrawberryShake.* to the latest stable whose tooling runs on net10, OR enabling roll-forward for the codegen tool (e.g. DOTNET_ROLL_FORWARD=LatestMajor), OR installing the .NET 9 runtime side-by-side via the official dotnet-install script. Pick the most robust option and note which.
+(C) StrawberryShake build-time codegen on the old 15.x targeted net9 only and failed without a net9 runtime. Resolve by upgrading StrawberryShake.* (and the strawberryshake.tools entry in .config/dotnet-tools.json) to the latest stable 16.x, whose codegen ships a net10 tool variant and runs natively on net10 — no roll-forward or extra runtime needed.
 (D) npm ERESOLVE: react@19 conflicts with @strapi/strapi 5.42.1 (peer wants react 17/18). Resolve by aligning versions — prefer bumping Strapi to the latest 5.x that supports React 19 if available; otherwise pin react/react-dom to ^18. Use --legacy-peer-deps only as a last resort and note it.
 
 Then the general migration:

@@ -37,6 +37,7 @@ Working directory is the AspireStrapi repo root. Rules:
 - Make focused commits ending with the Co-Authored-By trailer for "Claude Opus 4.8 (1M context) <noreply@anthropic.com>".
 - Do NOT push, open PRs, or merge to dev unless your phase explicitly says so.
 - Run the stated gate command and report its real output. Set ok=false (do not fake success) if it fails.
+- BUILD ENV: a .NET 9 runtime is installed side-by-side at ~/.dotnet (the system host at /usr/local/share/dotnet only has 8.x + 10.x). StrawberryShake's build-time codegen tool targets net9. ALWAYS export DOTNET_ROLL_FORWARD=LatestMajor before running dotnet build/restore so the net9 codegen tool rolls forward onto the net10 runtime. If a build still fails to find Microsoft.NETCore.App 9.0, prepend ~/.dotnet to DOTNET_ROOT/PATH as a fallback.
 - Return the structured status object as your final result.`
 
 // helper that runs one phase agent and halts the pipeline on a failed gate
@@ -69,14 +70,14 @@ full list of every pre-existing build error and npm error into \`notes\` so late
 ${REPO_RULES}`, { label: 'baseline', phase: 'Baseline', schema: STATUS })
 log(`[Baseline] recorded. notes: ${results.baseline?.notes || 'n/a'}`)
 
-// ---- Phase 1: Merge Renovate PRs -------------------------------------------
+// ---- Phase 1: Merge Renovate PRs (NO build gate — repo doesn't build until Migrate) --
 results.merge = await runPhase('Merge PRs', `
-Merge the two open Renovate dependency PRs.
-1. \`gh pr list --state open\` to confirm #49 (nuget) and #50 (npm) (numbers may differ — match by branch renovate/nuget-minorpatch-updates and renovate/npm-minorpatch-updates).
-2. Merge each into dev with \`gh pr merge <n> --squash --delete-branch\` (this phase IS allowed to update dev).
-3. \`git checkout ${BRANCH}\` then \`git rebase dev\` (or merge dev in) to pull the updates onto our branch. Resolve any conflicts conservatively, preferring the updated dependency versions.
-4. Run \`dotnet build AspireStrapi.sln\` and \`npm install\` in Backend/backend-blog.
-Gate: both PRs merged AND branch builds. If a PR is already merged/closed, note it and continue.`)
+Ensure the open Renovate dependency PRs are merged and our branch is on top of dev.
+1. \`gh pr list --state all --limit 8\` — match the renovate PRs by branch renovate/nuget-minorpatch-updates and renovate/npm-minorpatch-updates.
+2. For any that are still OPEN, merge into dev with \`gh pr merge <n> --squash --delete-branch\` (this phase IS allowed to update dev). If they are already MERGED, note that and skip.
+3. \`git checkout ${BRANCH}\` then ensure dev is an ancestor (\`git merge --ff-only dev\` or \`git rebase dev\`). Resolve any conflicts preferring the updated dependency versions.
+4. Confirm with \`git log --oneline -3 dev\` and \`git diff --name-only dev ${BRANCH}\`.
+Gate: the renovate PRs are MERGED (or confirmed already merged) AND ${BRANCH} has dev as an ancestor. DO NOT run a build here — the repo intentionally does not build until the Migrate phase fixes it. Commit only if you actually changed tracked files.`)
 
 // ---- Phase 2: Migrate to .NET 10 + latest deps -----------------------------
 results.migrate = await runPhase('Migrate', `

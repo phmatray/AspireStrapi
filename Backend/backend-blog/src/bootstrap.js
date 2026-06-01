@@ -63,11 +63,18 @@ function getFileData(fileName) {
   const ext = fileName.split(".").pop();
   const mimeType = mime.lookup(ext);
 
+  // Strapi 5 (formidable v3) reads filepath/originalFilename/mimetype on the
+  // file object; the legacy template only set path/name/type. Provide the
+  // full superset so the local upload provider can stream the source file.
   return {
+    filepath: filePath,
     path: filePath,
     name: fileName,
+    originalFilename: fileName,
     size,
+    sizeInBytes: size,
     type: mimeType,
+    mimetype: mimeType,
   };
 }
 
@@ -105,25 +112,44 @@ async function checkFileExistsBeforeUpload(files) {
   const filesCopy = [...files];
 
   for (const fileName of filesCopy) {
-    // Check if the file already exists in Strapi
-    const fileWhereName = await strapi.query("plugin::upload.file").findOne({
-      where: {
-        name: fileName,
-      },
-    });
+    // Skip missing/undefined entries so a single bad media reference
+    // never aborts the whole seed — the demo content matters more than
+    // the example images (uploads can fail under newer Node/sharp).
+    if (!fileName) continue;
+    try {
+      // Check if the file already exists in Strapi
+      const fileWhereName = await strapi.query("plugin::upload.file").findOne({
+        where: {
+          name: fileName,
+        },
+      });
 
-    if (fileWhereName) {
-      // File exists, don't upload it
-      existingFiles.push(fileWhereName);
-    } else {
+      if (fileWhereName) {
+        // File exists, don't upload it
+        existingFiles.push(fileWhereName);
+        continue;
+      }
+
+      const filePath = path.join("data", "uploads", fileName);
+      if (!fs.existsSync(filePath)) {
+        strapi.log.warn(`Seed: media file not found, skipping: ${fileName}`);
+        continue;
+      }
+
       // File doesn't exist, upload it
       const fileData = getFileData(fileName);
       const fileNameNoExtension = fileName.split('.').shift()
       const [file] = await uploadFile(fileData, fileNameNoExtension);
       uploadedFiles.push(file);
+    } catch (error) {
+      strapi.log.warn(
+        `Seed: could not upload media "${fileName}", skipping. ${error?.message || error}`
+      );
     }
   }
   const allFiles = [...existingFiles, ...uploadedFiles];
+  // Nothing resolved -> return undefined so the entry is created without media
+  if (allFiles.length === 0) return undefined;
   // If only one file then return only that file
   return allFiles.length === 1 ? allFiles[0] : allFiles;
 }
@@ -133,6 +159,9 @@ async function updateBlocks(blocks) {
   for (const block of blocks) {
     if (block.__component === "shared.media") {
       const uploadedFiles = await checkFileExistsBeforeUpload([block.file]);
+      // Drop the media block entirely if its image could not be uploaded,
+      // so the article still seeds with its remaining content.
+      if (!uploadedFiles) continue;
       // Copy the block to not mutate directly
       const blockCopy = { ...block };
       // Replace the file name on the block with the actual file
@@ -143,6 +172,7 @@ async function updateBlocks(blocks) {
       const existingAndUploadedFiles = await checkFileExistsBeforeUpload(
         block.files
       );
+      if (!existingAndUploadedFiles) continue;
       // Copy the block to not mutate directly
       const blockCopy = { ...block };
       // Replace the file names on the block with the actual files

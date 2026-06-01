@@ -3,3 +3,7 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/node_modules/
+
+# Editor / tooling (local only)
+.idea/
+.claude/

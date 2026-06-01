@@ -7,18 +7,21 @@ namespace AspireStrapi.AppHost.Resources.Strapi;
 public class StrapiContainerResource(string name)
     : ContainerResource(name), IStrapiResource
 {
+    internal const string PrimaryEndpointName = "http";
+
+    private EndpointReference? _primaryEndpoint;
+
     /// <summary>
-    /// Gets the connection string for the Strapi server.
+    /// Gets the primary endpoint for the Strapi server.
     /// </summary>
-    /// <returns>A connection string for the Strapi server in the form "http://host:port".</returns>
-    public string? GetConnectionString()
-    {
-        if (!this.TryGetAllocatedEndPoints(out var allocatedEndpoints))
-        {
-            throw new DistributedApplicationException($"Strapi resource \"{Name}\" does not have endpoint annotation.");
-        }
-        
-        var endpoint = allocatedEndpoints.Single();
-        return $"http://{endpoint.EndPointString}";
-    }
+    public EndpointReference PrimaryEndpoint =>
+        _primaryEndpoint ??= new(this, PrimaryEndpointName);
+
+    /// <summary>
+    /// Gets the connection string expression for the Strapi server
+    /// in the form "http://host:port".
+    /// </summary>
+    public ReferenceExpression ConnectionStringExpression =>
+        ReferenceExpression.Create(
+            $"http://{PrimaryEndpoint.Property(EndpointProperty.Host)}:{PrimaryEndpoint.Property(EndpointProperty.Port)}");
 }

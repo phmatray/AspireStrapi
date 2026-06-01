@@ -1,6 +1,3 @@
-using System.Net.Sockets;
-using System.Text.Json;
-
 namespace AspireStrapi.AppHost.Resources.Strapi;
 
 /// <summary>
@@ -22,16 +19,9 @@ public static class StrapiBuilderExtensions
     private const string DatabaseUsernameEnvVarName = "DATABASE_USERNAME";
     // The database password.
     private const string DatabasePasswordEnvVarName = "DATABASE_PASSWORD";
-    // The secret used to sign the JWT for the Users-Permissions plugin.
-    private const string JwtSecretEnvVarName = "JWT_SECRET";
-    // The secret used to sign the JWT for the Admin panel.
-    private const string AdminJwtSecretEnvVarName = "ADMIN_JWT_SECRET";
-    // The secret keys used to sign the session cookies.
-    private const string AppKeysEnvVarName = "APP_KEYS";
-    
-    
+
     /// <summary>
-    /// Adds a Strapi container to the application model. The default image is "ghcr.io/linuxserver/plex" and the tag is "latest".
+    /// Adds a Strapi container to the application model.
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
     /// <param name="name">The name of the resource. This name will be used as the connection string name when referenced in a dependency.</param>
@@ -42,19 +32,16 @@ public static class StrapiBuilderExtensions
         string name,
         int? port = null)
     {
-        var plexContainer = new StrapiContainerResource(name);
+        var strapiContainer = new StrapiContainerResource(name);
 
         return builder
-            .AddResource(plexContainer)
+            .AddResource(strapiContainer)
             // TODO: Use a custom image.
-            .WithAnnotation(new ContainerImageAnnotation { Image = "ghcr.io/linuxserver/plex", Tag = "latest" })
-            .WithAnnotation(new ServiceBindingAnnotation(
-                protocol: ProtocolType.Tcp,
-                uriScheme: "http",
-                name: "web",
+            .WithImage("strapi/strapi", "latest")
+            .WithHttpEndpoint(
                 port: port,
-                containerPort: 32400))
-            .WithAnnotation(new ManifestPublishingCallbackAnnotation(WriteStrapiContainerToManifest))
+                targetPort: 1337,
+                name: StrapiContainerResource.PrimaryEndpointName)
             .WithEnvironment(NodeEnvEnvVarName, "production")
             .WithEnvironment(DatabaseClientEnvVarName, "mysql")
             .WithEnvironment(DatabaseHostEnvVarName, "mysql")
@@ -62,10 +49,5 @@ public static class StrapiBuilderExtensions
             .WithEnvironment(DatabaseNameEnvVarName, "strapi")
             .WithEnvironment(DatabaseUsernameEnvVarName, "strapi")
             .WithEnvironment(DatabasePasswordEnvVarName, "strapi");
-    }
-    
-    private static void WriteStrapiContainerToManifest(Utf8JsonWriter json)
-    {
-        json.WriteString("type", "plex.server.v0");
     }
 }

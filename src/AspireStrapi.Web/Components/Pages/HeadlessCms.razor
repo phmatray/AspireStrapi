@@ -1,0 +1,112 @@
+@page "/headless-cms"
+@rendermode InteractiveServer
+@inject IContentService ContentService
+
+<PageTitle>How this works · Strapi CMS demo</PageTitle>
+
+<header class="cms-page-header">
+    <p class="cms-eyebrow">Headless CMS demo</p>
+    <h1>How this app works</h1>
+    <p class="lead text-body-secondary">
+        A headless CMS owns the content; this app owns the presentation. The two talk over an API.
+    </p>
+</header>
+
+<section class="cms-explainer">
+    <ol class="cms-flow" role="list">
+        <li class="cms-flow__step">
+            <h2 class="h5">1 · Authored in Strapi</h2>
+            <p>
+                Editors create and edit articles, categories and authors in the
+                <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
+                Strapi is the single source of truth for all content.
+            </p>
+        </li>
+        <li class="cms-flow__step">
+            <h2 class="h5">2 · Served over GraphQL</h2>
+            <p>
+                Strapi exposes that content through a GraphQL API. This Blazor app queries it through
+                an application <em>port</em>, so the UI never talks to Strapi directly — it depends only
+                on a clean use-case interface.
+            </p>
+        </li>
+        <li class="cms-flow__step">
+            <h2 class="h5">3 · Rendered live by Blazor</h2>
+            <p>
+                Each page fetches fresh data on load and renders it server-side with Blazor. Cover images
+                and avatars are streamed straight from Strapi's media library.
+            </p>
+        </li>
+    </ol>
+
+    <div class="alert alert-success cms-live-note" role="note">
+        <h2 class="h6 mb-1">Editing in Strapi reflects here instantly</h2>
+        <p class="mb-0">
+            Because nothing is baked at build time, any change you publish in the Strapi admin shows up
+            the next time a page loads. Edit an article's title, swap a cover image, or add a new
+            category in
+            <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">http://localhost:1337/admin</a>,
+            then refresh <a href="/articles">Articles</a> — your change is already there. No redeploy, no rebuild.
+        </p>
+    </div>
+
+    <section class="cms-live-proof" aria-label="Live content check">
+        <h2 class="h5">Live content check</h2>
+        <p class="text-body-secondary">
+            The value below is fetched from Strapi right now to prove the connection is live:
+        </p>
+
+        @if (_state == LoadState.Loading)
+        {
+            <LoadingIndicator Message="Fetching the About entry from Strapi…" />
+        }
+        else if (_state == LoadState.Error)
+        {
+            <ErrorAlert OnRetry="LoadAsync" />
+        }
+        else if (_about is null)
+        {
+            <div class="alert alert-info" role="status">
+                No “About” entry exists in Strapi yet. Create one in the admin to see it appear here.
+            </div>
+        }
+        else
+        {
+            <figure class="cms-live-card">
+                <figcaption class="text-body-secondary small">About page title (live from Strapi)</figcaption>
+                <blockquote class="mb-0">
+                    <strong>@_about.Title</strong>
+                    @if (_about.CreatedAt is { } created)
+                    {
+                        <span class="d-block small text-body-secondary">
+                            created <time datetime="@created.ToString("yyyy-MM-dd")">@created.ToString("MMMM d, yyyy")</time>
+                        </span>
+                    }
+                </blockquote>
+            </figure>
+        }
+    </section>
+</section>
+
+@code {
+    private enum LoadState { Loading, Loaded, Error }
+
+    private AboutPageDto? _about;
+    private LoadState _state = LoadState.Loading;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _state = LoadState.Loading;
+        try
+        {
+            _about = await ContentService.GetAboutAsync();
+            _state = LoadState.Loaded;
+        }
+        catch
+        {
+            _state = LoadState.Error;
+        }
+    }
+}

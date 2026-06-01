@@ -1,0 +1,13 @@
+query GetCategories {
+  categories(sort: ["name:asc"]) {
+    documentId
+    name
+    slug
+    description
+    articles_connection {
+      nodes {
+        documentId
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+@page "/authors"
+@rendermode InteractiveServer
+@inject IContentService ContentService
+
+<PageTitle>Authors · Strapi CMS demo</PageTitle>
+
+<header class="cms-page-header">
+    <p class="cms-eyebrow">Headless CMS demo</p>
+    <h1>Authors</h1>
+    <p class="lead text-body-secondary">
+        The people writing in Strapi, shown with the articles attributed to them.
+    </p>
+</header>
+
+@if (_state == LoadState.Loading)
+{
+    <LoadingIndicator Message="Loading authors from Strapi…" />
+}
+else if (_state == LoadState.Error)
+{
+    <ErrorAlert OnRetry="LoadAsync" />
+}
+else if (_authors is { Count: 0 })
+{
+    <div class="alert alert-info" role="status">No authors have been created yet.</div>
+}
+else
+{
+    <div class="d-flex flex-column gap-4">
+        @foreach (AuthorDto author in _authors!)
+        {
+            <section class="author-panel" aria-label="@author.Name">
+                <header class="author-panel__header d-flex align-items-center gap-3">
+                    @if (!string.IsNullOrWhiteSpace(author.AvatarUrl))
+                    {
+                        <img src="@author.AvatarUrl" class="author-panel__avatar" alt="" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span class="author-panel__avatar author-panel__avatar--placeholder" aria-hidden="true">
+                            @GetInitials(author.Name)
+                        </span>
+                    }
+                    <div>
+                        <h2 class="h4 mb-0">@author.Name</h2>
+                        @if (!string.IsNullOrWhiteSpace(author.Email))
+                        {
+                            <a href="mailto:@author.Email" class="small">@author.Email</a>
+                        }
+                        <p class="small text-body-secondary mb-0">
+                            @author.Articles.Count @(author.Articles.Count == 1 ? "article" : "articles")
+                        </p>
+                    </div>
+                </header>
+
+                @if (author.Articles.Count == 0)
+                {
+                    <p class="text-body-secondary mt-3 mb-0"><em>No published articles yet.</em></p>
+                }
+                else
+                {
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mt-1">
+                        @foreach (ArticleDto article in author.Articles)
+                        {
+                            <div class="col">
+                                <ArticleCard Article="article" />
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+        }
+    </div>
+}
+
+@code {
+    private enum LoadState { Loading, Loaded, Error }
+
+    private IReadOnlyList<AuthorDto>? _authors;
+    private LoadState _state = LoadState.Loading;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _state = LoadState.Loading;
+        try
+        {
+            _authors = await ContentService.GetAuthorsAsync();
+            _state = LoadState.Loaded;
+        }
+        catch
+        {
+            _state = LoadState.Error;
+        }
+    }
+
+    private static string GetInitials(string name)
+    {
+        string[] parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length switch
+        {
+            0 => "?",
+            1 => parts[0][..1].ToUpperInvariant(),
+            _ => $"{parts[0][0]}{parts[^1][0]}".ToUpperInvariant(),
+        };
+    }
+}

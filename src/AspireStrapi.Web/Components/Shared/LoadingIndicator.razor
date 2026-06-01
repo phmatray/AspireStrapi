@@ -1,0 +1,11 @@
+@* Accessible loading state used by every async page. *@
+<div class="cms-state" role="status" aria-live="polite">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span class="cms-state__text">@Message</span>
+</div>
+
+@code {
+    /// <summary>The text announced to assistive technology while loading.</summary>
+    [Parameter]
+    public string Message { get; set; } = "Loading content from Strapi…";
+}

@@ -1,0 +1,66 @@
+@* A summary card for one article, reused across the list, category and author pages. *@
+<article class="card h-100 article-card">
+    @if (!string.IsNullOrWhiteSpace(Article.CoverImageUrl))
+    {
+        <a href="@DetailUrl" class="article-card__cover-link" tabindex="-1" aria-hidden="true">
+            <img src="@Article.CoverImageUrl"
+                 class="article-card__cover"
+                 alt=""
+                 loading="lazy" />
+        </a>
+    }
+    else
+    {
+        <div class="article-card__cover article-card__cover--placeholder" aria-hidden="true">
+            <span class="bi bi-card-image"></span>
+        </div>
+    }
+
+    <div class="card-body d-flex flex-column">
+        @if (!string.IsNullOrWhiteSpace(Article.CategoryName))
+        {
+            <p class="mb-2">
+                <span class="badge rounded-pill text-bg-primary">@Article.CategoryName</span>
+            </p>
+        }
+
+        <h3 class="h5 card-title">
+            <a href="@DetailUrl" class="stretched-link text-decoration-none">@Article.Title</a>
+        </h3>
+
+        @if (!string.IsNullOrWhiteSpace(Article.Description))
+        {
+            <p class="card-text text-body-secondary article-card__excerpt">@Article.Description</p>
+        }
+
+        <div class="article-card__meta mt-auto pt-2 d-flex align-items-center gap-2">
+            @if (!string.IsNullOrWhiteSpace(Article.AuthorAvatarUrl))
+            {
+                <img src="@Article.AuthorAvatarUrl"
+                     class="article-card__avatar"
+                     alt=""
+                     loading="lazy" />
+            }
+            <span class="small text-body-secondary">
+                @if (!string.IsNullOrWhiteSpace(Article.AuthorName))
+                {
+                    <span>By @Article.AuthorName</span>
+                }
+                @if (Article.PublishedAt is { } published)
+                {
+                    <span>
+                        @(string.IsNullOrWhiteSpace(Article.AuthorName) ? "" : " · ")
+                        <time datetime="@published.ToString("yyyy-MM-dd")">@published.ToString("MMM d, yyyy")</time>
+                    </span>
+                }
+            </span>
+        </div>
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public ArticleDto Article { get; set; } = default!;
+
+    private string DetailUrl => $"/articles/{Article.Id}";
+}

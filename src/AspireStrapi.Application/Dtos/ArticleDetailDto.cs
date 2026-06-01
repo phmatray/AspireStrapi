@@ -1,17 +1,18 @@
 namespace AspireStrapi.Application.Dtos;
 
 /// <summary>
-/// A read model describing an article for list/summary presentation.
+/// A read model describing a single article in full, including its rich-text body.
 /// </summary>
-public sealed record ArticleDto(
+public sealed record ArticleDetailDto(
     string Id,
     string Title,
     string? Description,
     string? Slug,
+    string? BodyHtml,
+    string? CoverImageUrl,
     string? AuthorName,
     string? AuthorAvatarUrl,
     string? CategoryName,
     string? CategorySlug,
-    string? CoverImageUrl,
     IReadOnlyList<string> Tags,
     DateTimeOffset? PublishedAt);

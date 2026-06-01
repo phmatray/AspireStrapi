@@ -1,0 +1,65 @@
+@page "/articles"
+@rendermode InteractiveServer
+@inject IContentService ContentService
+
+<PageTitle>Articles · Strapi CMS demo</PageTitle>
+
+<header class="cms-page-header">
+    <p class="cms-eyebrow">Headless CMS demo</p>
+    <h1>Articles</h1>
+    <p class="lead text-body-secondary">
+        Every article below is authored in the Strapi admin and rendered live by Blazor
+        over GraphQL.
+    </p>
+</header>
+
+@if (_state == LoadState.Loading)
+{
+    <LoadingIndicator Message="Loading articles from Strapi…" />
+}
+else if (_state == LoadState.Error)
+{
+    <ErrorAlert OnRetry="LoadAsync" />
+}
+else if (_articles is { Count: 0 })
+{
+    <div class="alert alert-info" role="status">
+        No articles have been published yet. Create one in the
+        <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>
+        and refresh.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        @foreach (ArticleDto article in _articles!)
+        {
+            <div class="col">
+                <ArticleCard Article="article" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private enum LoadState { Loading, Loaded, Error }
+
+    private IReadOnlyList<ArticleDto>? _articles;
+    private LoadState _state = LoadState.Loading;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _state = LoadState.Loading;
+        try
+        {
+            _articles = await ContentService.GetArticlesAsync();
+            _state = LoadState.Loaded;
+        }
+        catch
+        {
+            _state = LoadState.Error;
+        }
+    }
+}

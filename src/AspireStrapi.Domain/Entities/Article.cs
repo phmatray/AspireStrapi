@@ -17,7 +17,9 @@ public sealed class Article
         Author? author = null,
         Category? category = null,
         IEnumerable<Tag>? tags = null,
-        DateTimeOffset? publishedAt = null)
+        DateTimeOffset? publishedAt = null,
+        string? coverImageUrl = null,
+        string? body = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -37,6 +39,8 @@ public sealed class Article
         Category = category;
         _tags = tags?.ToList() ?? [];
         PublishedAt = publishedAt;
+        CoverImageUrl = coverImageUrl;
+        Body = body;
     }
 
     public string Id { get; }
@@ -54,6 +58,12 @@ public sealed class Article
     public IReadOnlyList<Tag> Tags => _tags;
 
     public DateTimeOffset? PublishedAt { get; }
+
+    /// <summary>Absolute URL of the cover image, if one was authored.</summary>
+    public string? CoverImageUrl { get; }
+
+    /// <summary>The article body, rendered as HTML from the Strapi rich-text blocks.</summary>
+    public string? Body { get; }
 
     public bool IsPublished => PublishedAt is not null;
 }

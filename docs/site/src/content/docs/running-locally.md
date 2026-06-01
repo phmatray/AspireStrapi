@@ -4,7 +4,7 @@ description: Start the whole stack — Postgres, Strapi, and the Blazor frontend
 ---
 
 For local development, the **Aspire AppHost** orchestrates every dependency:
-Postgres, the Strapi CMS (built from `Backend/backend-blog`), and the Blazor
+Postgres, the Strapi CMS (built from `cms`), and the Blazor
 frontend.
 
 ## Prerequisites
@@ -18,7 +18,7 @@ frontend.
 From the repository root:
 
 ```bash
-dotnet run --project src/AspireStrapi.AppHost
+dotnet run --project dotnet/AspireStrapi.AppHost
 ```
 
 This brings up:

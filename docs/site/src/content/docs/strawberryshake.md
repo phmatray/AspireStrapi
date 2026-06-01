@@ -17,7 +17,7 @@ MSBuild task version-skew to manage.
 
 ## Configuration
 
-Codegen is driven by `src/AspireStrapi.Infrastructure/ApiClient/.graphqlrc.json`:
+Codegen is driven by `dotnet/AspireStrapi.Infrastructure/ApiClient/.graphqlrc.json`:
 
 ```json
 {

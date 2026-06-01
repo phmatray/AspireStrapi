@@ -3,7 +3,7 @@ title: Strapi GraphQL setup
 description: How the Strapi 5 GraphQL plugin, public permissions, flattened v5 schema, and seed data are configured.
 ---
 
-The backend is a **Strapi 5.47** application in `Backend/backend-blog`. It
+The backend is a **Strapi 5.47** application in `cms`. It
 exposes content through the GraphQL plugin and is seeded on first run.
 
 ## The GraphQL plugin

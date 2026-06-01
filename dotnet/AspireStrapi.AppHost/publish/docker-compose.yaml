@@ -28,6 +28,9 @@ services:
     restart: "unless-stopped"
   strapi:
     image: "${STRAPI_IMAGE}"
+    build:
+      context: "../../../cms"
+      dockerfile: "Dockerfile"
     environment:
       ConnectionStrings__strapidb: "Host=postgres;Port=5432;Username=${POSTGRES_USERNAME};Password=${POSTGRES_PASSWORD};Database=strapi"
       STRAPIDB_HOST: "postgres"

@@ -8,8 +8,8 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY . .
-RUN dotnet restore "src/AspireStrapi.Web/AspireStrapi.Web.csproj"
-WORKDIR "/src/src/AspireStrapi.Web"
+RUN dotnet restore "dotnet/AspireStrapi.Web/AspireStrapi.Web.csproj"
+WORKDIR "/src/dotnet/AspireStrapi.Web"
 RUN dotnet build "AspireStrapi.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

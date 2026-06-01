@@ -40,11 +40,11 @@ var postgres = builder
 var strapiDb = postgres.AddDatabase("strapidb", databaseName: "strapi");
 
 // ---------------------------------------------------------------------------
-// Strapi CMS – built from the Backend/backend-blog Dockerfile, backed by
+// Strapi CMS – built from the cms Dockerfile, backed by
 // Postgres, exposed on port 1337.
 // ---------------------------------------------------------------------------
 var strapi = builder
-    .AddDockerfile("strapi", "../../Backend/backend-blog")
+    .AddDockerfile("strapi", "../../cms")
     .WithHttpEndpoint(targetPort: 1337, port: 1337, name: "http")
     .WithExternalHttpEndpoints()
     .WithReference(strapiDb)

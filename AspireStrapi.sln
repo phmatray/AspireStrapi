@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Domain", "src\AspireStrapi.Domain\AspireStrapi.Domain.csproj", "{A4C30971-CEF4-4C4B-B59D-37BB4F76F0FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Domain", "dotnet\AspireStrapi.Domain\AspireStrapi.Domain.csproj", "{A4C30971-CEF4-4C4B-B59D-37BB4F76F0FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Application", "src\AspireStrapi.Application\AspireStrapi.Application.csproj", "{60965758-5AA9-4C28-B051-688F3EBB0060}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Application", "dotnet\AspireStrapi.Application\AspireStrapi.Application.csproj", "{60965758-5AA9-4C28-B051-688F3EBB0060}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Infrastructure", "src\AspireStrapi.Infrastructure\AspireStrapi.Infrastructure.csproj", "{6A70687F-EACA-4B22-8718-8E3FBC2176C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Infrastructure", "dotnet\AspireStrapi.Infrastructure\AspireStrapi.Infrastructure.csproj", "{6A70687F-EACA-4B22-8718-8E3FBC2176C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Web", "src\AspireStrapi.Web\AspireStrapi.Web.csproj", "{3973FD6F-AE1C-45C1-8286-DAFBBFAFE0E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.Web", "dotnet\AspireStrapi.Web\AspireStrapi.Web.csproj", "{3973FD6F-AE1C-45C1-8286-DAFBBFAFE0E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.ServiceDefaults", "src\AspireStrapi.ServiceDefaults\AspireStrapi.ServiceDefaults.csproj", "{21DA7F0E-093D-4BE0-B225-E41B7388992B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.ServiceDefaults", "dotnet\AspireStrapi.ServiceDefaults\AspireStrapi.ServiceDefaults.csproj", "{21DA7F0E-093D-4BE0-B225-E41B7388992B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.AppHost", "src\AspireStrapi.AppHost\AspireStrapi.AppHost.csproj", "{F6E9B41D-778E-4B84-9D9E-C8E40469BE3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireStrapi.AppHost", "dotnet\AspireStrapi.AppHost\AspireStrapi.AppHost.csproj", "{F6E9B41D-778E-4B84-9D9E-C8E40469BE3C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{B1AC0DEF-0001-4000-8000-000000000001}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cms", "cms", "{B1AC0DEF-0001-4000-8000-000000000001}"
 	ProjectSection(SolutionItems) = preProject
-		Backend\backend-blog\package.json = Backend\backend-blog\package.json
-		Backend\backend-blog\README.md = Backend\backend-blog\README.md
-		Backend\backend-blog\Dockerfile = Backend\backend-blog\Dockerfile
+		cms\package.json = cms\package.json
+		cms\README.md = cms\README.md
+		cms\Dockerfile = cms\Dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{B1AC0DEF-0002-4000-8000-000000000002}"

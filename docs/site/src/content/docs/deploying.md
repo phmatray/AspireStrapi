@@ -12,13 +12,13 @@ deployment.
 ## Publish the Compose files
 
 ```bash
-aspire publish src/AspireStrapi.AppHost
+aspire publish dotnet/AspireStrapi.AppHost
 ```
 
 This generates:
 
-- `src/AspireStrapi.AppHost/publish/docker-compose.yaml`
-- `src/AspireStrapi.AppHost/publish/.env`
+- `dotnet/AspireStrapi.AppHost/publish/docker-compose.yaml`
+- `dotnet/AspireStrapi.AppHost/publish/.env`
 
 The `.env` carries the Strapi secrets and Postgres credentials that were
 declared as Aspire parameters in `Program.cs`.
@@ -28,10 +28,10 @@ declared as Aspire parameters in `Program.cs`.
 With [OrbStack](https://orbstack.dev/) running as the Docker host:
 
 ```bash
-docker compose -f src/AspireStrapi.AppHost/publish/docker-compose.yaml up -d
+docker compose -f dotnet/AspireStrapi.AppHost/publish/docker-compose.yaml up -d
 ```
 
-Compose builds the Strapi image from `Backend/backend-blog`, starts Postgres
+Compose builds the Strapi image from `cms`, starts Postgres
 with a persistent volume, and runs the Blazor frontend.
 
 ## URLs and ports

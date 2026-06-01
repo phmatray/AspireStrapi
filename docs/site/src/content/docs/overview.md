@@ -31,7 +31,7 @@ The .NET solution lives under `src/` and is organised into hexagonal layers:
 | `AspireStrapi.AppHost` | Aspire orchestration and Docker Compose publishing. |
 | `AspireStrapi.ServiceDefaults` | Shared telemetry, health checks, and resilience defaults. |
 
-`Backend/backend-blog` holds the Strapi 5 application.
+`cms` holds the Strapi 5 application.
 
 ## How content flows
 

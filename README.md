@@ -83,11 +83,11 @@ Prerequisites: .NET 10 SDK, Node.js 22, and a container runtime (Docker/OrbStack
 
 ```bash
 # from the repo root
-dotnet run --project src/AspireStrapi.AppHost
+dotnet run --project dotnet/AspireStrapi.AppHost
 ```
 
 The AppHost starts Postgres, builds and runs Strapi (from
-`Backend/backend-blog`), and runs the Blazor frontend. On its **first run**
+`cms`), and runs the Blazor frontend. On its **first run**
 Strapi seeds the database with **5 articles, 2 authors, and 5 categories**
 (with cover images) and grants public `find`/`findOne` permissions so the
 GraphQL API is queryable without a token.
@@ -98,10 +98,10 @@ Open the Aspire dashboard from the console output to reach each resource.
 
 ```bash
 # generate docker-compose.yaml + .env from the AppHost model
-aspire publish src/AspireStrapi.AppHost
+aspire publish dotnet/AspireStrapi.AppHost
 
 # deploy on OrbStack
-docker compose -f src/AspireStrapi.AppHost/publish/docker-compose.yaml up -d
+docker compose -f dotnet/AspireStrapi.AppHost/publish/docker-compose.yaml up -d
 ```
 
 This uses the Aspire **Docker Compose compute integration**
@@ -135,7 +135,7 @@ content.
 Strapi 5 returns a **flattened** schema — there is no more v4-style
 `data`/`attributes` wrapping. StrawberryShake generates a typed `BlogClient`
 from the `.graphql` queries in
-`src/AspireStrapi.Infrastructure/ApiClient`. For example, fetching articles:
+`dotnet/AspireStrapi.Infrastructure/ApiClient`. For example, fetching articles:
 
 ```graphql
 query GetArticles {

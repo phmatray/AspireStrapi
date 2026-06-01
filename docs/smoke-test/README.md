@@ -50,13 +50,13 @@ is irrelevant because the articles UI is absent.
 ## Root cause / handoff for supervising loop
 
 The `aspirestrapi-frontend-blog:local` image was published from the wrong source
-(the HorizonHub app), not this repo's `src/AspireStrapi.Web`. The image must be
+(the HorizonHub app), not this repo's `dotnet/AspireStrapi.Web`. The image must be
 rebuilt from the correct project before the smoke test can pass:
 
     DOTNET_ROLL_FORWARD=LatestMajor \
-    dotnet publish src/AspireStrapi.Web/AspireStrapi.Web.csproj \
+    dotnet publish dotnet/AspireStrapi.Web/AspireStrapi.Web.csproj \
       -t:PublishContainer -p:ContainerImageTag=local \
       -p:ContainerRepository=aspirestrapi-frontend-blog
 
-then `docker compose up -d --build` in `src/AspireStrapi.AppHost/publish` and
+then `docker compose up -d --build` in `dotnet/AspireStrapi.AppHost/publish` and
 re-run this smoke test against `http://127.0.0.1:8080/articles`.

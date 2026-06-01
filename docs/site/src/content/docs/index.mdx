@@ -1,0 +1,36 @@
+---
+title: AspireStrapi
+description: A .NET 10 Aspire app with a Strapi 5 headless CMS, GraphQL via StrawberryShake, and a Blazor frontend.
+template: splash
+hero:
+  tagline: A .NET 10 Aspire reference app pairing a Strapi 5 headless CMS with a Blazor frontend over GraphQL.
+  actions:
+    - text: Overview
+      link: /AspireStrapi/overview/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/phmatray/AspireStrapi
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+	<Card title="Hexagonal architecture" icon="puzzle">
+		Domain and use cases stay free of Strapi, GraphQL, and Blazor. See the
+		[Architecture](/AspireStrapi/architecture/) page.
+	</Card>
+	<Card title="Strapi 5 headless CMS" icon="document">
+		Content is authored in Strapi admin and served over GraphQL. See
+		[Strapi GraphQL setup](/AspireStrapi/strapi-graphql/).
+	</Card>
+	<Card title="Typed GraphQL client" icon="seti:graphql">
+		StrawberryShake 16 generates a typed `BlogClient`. See the
+		[StrawberryShake client](/AspireStrapi/strawberryshake/) page.
+	</Card>
+	<Card title="Run & deploy" icon="rocket">
+		Orchestrate locally with [Aspire](/AspireStrapi/running-locally/) and
+		[deploy to OrbStack](/AspireStrapi/deploying/) via Docker Compose.
+	</Card>
+</CardGrid>

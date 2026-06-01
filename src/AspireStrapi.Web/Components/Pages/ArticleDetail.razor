@@ -2,59 +2,54 @@
 @rendermode InteractiveServer
 @inject IContentService ContentService
 
-<PageTitle>@(_article?.Title ?? "Article") · Strapi CMS demo</PageTitle>
+<PageTitle>@(_article?.Title ?? "Article") · The Headless Press</PageTitle>
 
-<p class="mb-3">
-    <a href="/articles" class="back-link">&larr; Back to all articles</a>
-</p>
+<div class="mx-auto max-w-3xl px-6 pt-12">
+    <a href="/articles" class="meta hover:text-vermilion transition-colors">&larr;&nbsp;&nbsp;Back to the folio</a>
+</div>
 
 @if (_state == LoadState.Loading)
 {
-    <LoadingIndicator Message="Loading the article from Strapi…" />
+    <div class="mx-auto max-w-3xl px-6"><LoadingIndicator Message="Loading the article from Strapi…" /></div>
 }
 else if (_state == LoadState.Error)
 {
-    <ErrorAlert OnRetry="LoadAsync" />
+    <div class="mx-auto max-w-3xl px-6 py-10"><ErrorAlert OnRetry="LoadAsync" /></div>
 }
 else if (_state == LoadState.NotFound || _article is null)
 {
-    <div class="alert alert-warning" role="status">
-        <strong>Article not found.</strong>
-        <span class="d-block">
-            It may have been unpublished or deleted in the
-            <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
-        </span>
+    <div class="mx-auto max-w-3xl px-6 py-10">
+        <EmptyNote>
+            <strong>Article not found.</strong> It may have been unpublished or deleted in the
+            <a class="ink-link" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
+        </EmptyNote>
     </div>
 }
 else
 {
-    <article class="article-detail">
-        <header class="article-detail__header">
+    <article class="pb-8">
+        <header class="mx-auto max-w-3xl px-6 pt-8 text-center">
             @if (!string.IsNullOrWhiteSpace(_article.CategoryName))
             {
-                <p class="mb-2">
-                    <a href="@CategoryUrl" class="text-decoration-none">
-                        <span class="badge rounded-pill text-bg-primary">@_article.CategoryName</span>
-                    </a>
-                </p>
+                <a href="@CategoryUrl" class="tag">@_article.CategoryName</a>
             }
 
-            <h1>@_article.Title</h1>
+            <h1 class="mt-6 font-display font-semibold tracking-tight leading-[1.02] text-[clamp(2.4rem,6vw,4.5rem)]">@_article.Title</h1>
 
             @if (!string.IsNullOrWhiteSpace(_article.Description))
             {
-                <p class="lead text-body-secondary">@_article.Description</p>
+                <p class="mt-6 font-display italic text-2xl leading-snug text-ink-soft max-w-2xl mx-auto">@_article.Description</p>
             }
 
-            <div class="article-detail__byline d-flex align-items-center gap-2">
+            <div class="mt-8 flex items-center justify-center gap-3">
                 @if (!string.IsNullOrWhiteSpace(_article.AuthorAvatarUrl))
                 {
-                    <img src="@_article.AuthorAvatarUrl" class="article-detail__avatar" alt="" loading="lazy" />
+                    <img src="@_article.AuthorAvatarUrl" class="w-10 h-10 rounded-full object-cover grayscale" alt="" loading="lazy" />
                 }
-                <span class="text-body-secondary">
+                <span class="meta normal-case tracking-wide text-[0.85rem] text-ink-soft">
                     @if (!string.IsNullOrWhiteSpace(_article.AuthorName))
                     {
-                        <span>By <strong>@_article.AuthorName</strong></span>
+                        <span>By <span class="text-ink">@_article.AuthorName</span></span>
                     }
                     @if (_article.PublishedAt is { } published)
                     {
@@ -66,10 +61,12 @@ else
 
         @if (!string.IsNullOrWhiteSpace(_article.CoverImageUrl))
         {
-            <img src="@_article.CoverImageUrl" class="article-detail__cover" alt="@($"Cover image for {_article.Title}")" />
+            <figure class="mx-auto max-w-4xl px-6 mt-12">
+                <div class="cover aspect-[16/9]"><img src="@_article.CoverImageUrl" alt="@($"Cover image for {_article.Title}")" /></div>
+            </figure>
         }
 
-        <div class="article-detail__body">
+        <div class="article-body mx-auto max-w-2xl px-6 mt-14">
             @if (!string.IsNullOrWhiteSpace(_article.BodyHtml))
             {
                 @((MarkupString)_article.BodyHtml)
@@ -80,18 +77,18 @@ else
             }
             else
             {
-                <p class="text-body-secondary"><em>This article has no body content yet.</em></p>
+                <p class="text-ink-faint italic">This article has no body content yet.</p>
             }
         </div>
 
         @if (_article.Tags.Count > 0)
         {
-            <footer class="article-detail__tags">
-                <h2 class="h6 text-uppercase text-body-secondary">Tags</h2>
-                <ul class="tag-list" role="list">
+            <footer class="mx-auto max-w-2xl px-6 mt-14 pt-8 border-t border-line">
+                <p class="kicker kicker--plain mb-3">Filed under</p>
+                <ul class="flex flex-wrap gap-2" role="list">
                     @foreach (string tag in _article.Tags)
                     {
-                        <li><span class="badge text-bg-light border">#@tag</span></li>
+                        <li><span class="tag">#@tag</span></li>
                     }
                 </ul>
             </footer>

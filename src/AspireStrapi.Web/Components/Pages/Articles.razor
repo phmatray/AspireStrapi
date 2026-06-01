@@ -2,44 +2,36 @@
 @rendermode InteractiveServer
 @inject IContentService ContentService
 
-<PageTitle>Articles · Strapi CMS demo</PageTitle>
+<PageTitle>Articles · The Headless Press</PageTitle>
 
-<header class="cms-page-header">
-    <p class="cms-eyebrow">Headless CMS demo</p>
-    <h1>Articles</h1>
-    <p class="lead text-body-secondary">
-        Every article below is authored in the Strapi admin and rendered live by Blazor
-        over GraphQL.
-    </p>
-</header>
+<PageMasthead Kicker="The full folio" Title="Articles">
+    Every piece below is authored in the Strapi admin and set into type by Blazor,
+    live over GraphQL. <span class="text-ink">@(_articles?.Count ?? 0) stories</span> in this issue.
+</PageMasthead>
 
-@if (_state == LoadState.Loading)
-{
-    <LoadingIndicator Message="Loading articles from Strapi…" />
-}
-else if (_state == LoadState.Error)
-{
-    <ErrorAlert OnRetry="LoadAsync" />
-}
-else if (_articles is { Count: 0 })
-{
-    <div class="alert alert-info" role="status">
-        No articles have been published yet. Create one in the
-        <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>
-        and refresh.
-    </div>
-}
-else
-{
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-        @foreach (ArticleDto article in _articles!)
-        {
-            <div class="col">
+<section class="mx-auto max-w-6xl px-6 pb-10">
+    @if (_state == LoadState.Loading)
+    {
+        <LoadingIndicator Message="Loading articles from Strapi…" />
+    }
+    else if (_state == LoadState.Error)
+    {
+        <ErrorAlert OnRetry="LoadAsync" />
+    }
+    else if (_articles is { Count: 0 })
+    {
+        <EmptyNote>No articles have been published yet. Create one in the <a class="ink-link" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a> and refresh.</EmptyNote>
+    }
+    else
+    {
+        <div class="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach (var article in _articles!)
+            {
                 <ArticleCard Article="article" />
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</section>
 
 @code {
     private enum LoadState { Loading, Loaded, Error }

@@ -3,16 +3,13 @@
 @inject IContentService ContentService
 @inject NavigationManager Navigation
 
-<PageTitle>Categories · Strapi CMS demo</PageTitle>
+<PageTitle>Categories · The Headless Press</PageTitle>
 
-<header class="cms-page-header">
-    <p class="cms-eyebrow">Headless CMS demo</p>
-    <h1>Categories</h1>
-    <p class="lead text-body-secondary">
-        Browse the topics defined in Strapi. Select a category to filter the articles below.
-    </p>
-</header>
+<PageMasthead Kicker="The desks" Title="Categories">
+    Browse the topics defined in Strapi. Pick a desk to filter the stories below.
+</PageMasthead>
 
+<section class="mx-auto max-w-6xl px-6 pb-10">
 @if (_categoriesState == LoadState.Loading)
 {
     <LoadingIndicator Message="Loading categories from Strapi…" />
@@ -23,14 +20,14 @@ else if (_categoriesState == LoadState.Error)
 }
 else if (_categories is { Count: 0 })
 {
-    <div class="alert alert-info" role="status">No categories have been created yet.</div>
+    <EmptyNote>No categories have been created yet.</EmptyNote>
 }
 else
 {
-    <ul class="category-chips" role="list">
+    <ul class="flex flex-wrap gap-3" role="list">
         <li>
             <button type="button"
-                    class="category-chip @(SelectedSlug is null ? "category-chip--active" : "")"
+                    class="chip @(SelectedSlug is null ? "chip--active" : "")"
                     aria-pressed="@(SelectedSlug is null)"
                     @onclick="ClearFilter">
                 All
@@ -40,19 +37,19 @@ else
         {
             <li>
                 <button type="button"
-                        class="category-chip @(SelectedSlug == category.Slug ? "category-chip--active" : "")"
+                        class="chip @(SelectedSlug == category.Slug ? "chip--active" : "")"
                         aria-pressed="@(SelectedSlug == category.Slug)"
                         @onclick="() => SelectCategory(category)">
                     @category.Name
-                    <span class="category-chip__count">@category.ArticleCount</span>
+                    <span class="chip__count">@category.ArticleCount</span>
                 </button>
             </li>
         }
     </ul>
 
-    <section class="mt-4" aria-live="polite">
-        <h2 class="h4">
-            @(_selectedCategory is null ? "All articles" : $"Articles in “{_selectedCategory.Name}”")
+    <section class="mt-12" aria-live="polite">
+        <h2 class="font-display text-3xl font-semibold mb-8">
+            @(_selectedCategory is null ? "All articles" : $"The {_selectedCategory.Name} desk")
         </h2>
 
         @if (_articlesState == LoadState.Loading)
@@ -65,21 +62,20 @@ else
         }
         else if (_articles is { Count: 0 })
         {
-            <div class="alert alert-info" role="status">No articles in this category.</div>
+            <EmptyNote>No articles on this desk yet.</EmptyNote>
         }
         else
         {
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mt-1">
+            <div class="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach (ArticleDto article in _articles!)
                 {
-                    <div class="col">
-                        <ArticleCard Article="article" />
-                    </div>
+                    <ArticleCard Article="article" />
                 }
             </div>
         }
     </section>
 }
+</section>
 
 @code {
     private enum LoadState { Loading, Loaded, Error }

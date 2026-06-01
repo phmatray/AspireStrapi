@@ -2,16 +2,13 @@
 @rendermode InteractiveServer
 @inject IContentService ContentService
 
-<PageTitle>Authors · Strapi CMS demo</PageTitle>
+<PageTitle>Authors · The Headless Press</PageTitle>
 
-<header class="cms-page-header">
-    <p class="cms-eyebrow">Headless CMS demo</p>
-    <h1>Authors</h1>
-    <p class="lead text-body-secondary">
-        The people writing in Strapi, shown with the articles attributed to them.
-    </p>
-</header>
+<PageMasthead Kicker="The masthead" Title="Contributors">
+    The bylines writing in Strapi, shown with the stories attributed to them.
+</PageMasthead>
 
+<section class="mx-auto max-w-6xl px-6 pb-10">
 @if (_state == LoadState.Loading)
 {
     <LoadingIndicator Message="Loading authors from Strapi…" />
@@ -22,49 +19,47 @@ else if (_state == LoadState.Error)
 }
 else if (_authors is { Count: 0 })
 {
-    <div class="alert alert-info" role="status">No authors have been created yet.</div>
+    <EmptyNote>No authors have been created yet.</EmptyNote>
 }
 else
 {
-    <div class="d-flex flex-column gap-4">
+    <div class="flex flex-col gap-16">
         @foreach (AuthorDto author in _authors!)
         {
-            <section class="author-panel" aria-label="@author.Name">
-                <header class="author-panel__header d-flex align-items-center gap-3">
+            <section aria-label="@author.Name">
+                <header class="flex items-center gap-5 pb-6 border-b border-ink">
                     @if (!string.IsNullOrWhiteSpace(author.AvatarUrl))
                     {
-                        <img src="@author.AvatarUrl" class="author-panel__avatar" alt="" loading="lazy" />
+                        <img src="@author.AvatarUrl" class="w-16 h-16 rounded-full object-cover grayscale" alt="" loading="lazy" />
                     }
                     else
                     {
-                        <span class="author-panel__avatar author-panel__avatar--placeholder" aria-hidden="true">
+                        <span class="w-16 h-16 rounded-full bg-ink text-paper font-display text-2xl flex items-center justify-center" aria-hidden="true">
                             @GetInitials(author.Name)
                         </span>
                     }
-                    <div>
-                        <h2 class="h4 mb-0">@author.Name</h2>
-                        @if (!string.IsNullOrWhiteSpace(author.Email))
-                        {
-                            <a href="mailto:@author.Email" class="small">@author.Email</a>
-                        }
-                        <p class="small text-body-secondary mb-0">
-                            @author.Articles.Count @(author.Articles.Count == 1 ? "article" : "articles")
-                        </p>
+                    <div class="flex-1">
+                        <h2 class="font-display text-3xl font-semibold leading-none">@author.Name</h2>
+                        <div class="mt-2 flex items-center gap-3">
+                            @if (!string.IsNullOrWhiteSpace(author.Email))
+                            {
+                                <a href="mailto:@author.Email" class="ink-link text-sm">@author.Email</a>
+                            }
+                            <span class="meta">@author.Articles.Count @(author.Articles.Count == 1 ? "story" : "stories")</span>
+                        </div>
                     </div>
                 </header>
 
                 @if (author.Articles.Count == 0)
                 {
-                    <p class="text-body-secondary mt-3 mb-0"><em>No published articles yet.</em></p>
+                    <p class="text-ink-faint italic mt-6">No published articles yet.</p>
                 }
                 else
                 {
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mt-1">
+                    <div class="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 mt-10">
                         @foreach (ArticleDto article in author.Articles)
                         {
-                            <div class="col">
-                                <ArticleCard Article="article" />
-                            </div>
+                            <ArticleCard Article="article" />
                         }
                     </div>
                 }
@@ -72,6 +67,7 @@ else
         }
     </div>
 }
+</section>
 
 @code {
     private enum LoadState { Loading, Loaded, Error }

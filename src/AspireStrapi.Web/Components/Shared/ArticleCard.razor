@@ -1,59 +1,49 @@
 @* A summary card for one article, reused across the list, category and author pages. *@
-<article class="card h-100 article-card">
+<article class="group flex flex-col h-full">
     @if (!string.IsNullOrWhiteSpace(Article.CoverImageUrl))
     {
-        <a href="@DetailUrl" class="article-card__cover-link" tabindex="-1" aria-hidden="true">
-            <img src="@Article.CoverImageUrl"
-                 class="article-card__cover"
-                 alt=""
-                 loading="lazy" />
+        <a href="@DetailUrl" class="cover aspect-[4/3] block mb-5" tabindex="-1" aria-hidden="true">
+            <img src="@Article.CoverImageUrl" alt="" loading="lazy" />
         </a>
     }
     else
     {
-        <div class="article-card__cover article-card__cover--placeholder" aria-hidden="true">
-            <span class="bi bi-card-image"></span>
-        </div>
+        <div class="cover cover--placeholder aspect-[4/3] mb-5 text-4xl" aria-hidden="true">✦</div>
     }
 
-    <div class="card-body d-flex flex-column">
-        @if (!string.IsNullOrWhiteSpace(Article.CategoryName))
-        {
-            <p class="mb-2">
-                <span class="badge rounded-pill text-bg-primary">@Article.CategoryName</span>
-            </p>
-        }
+    <div class="flex flex-col flex-1">
+        <div class="flex items-center gap-3 mb-3">
+            @if (!string.IsNullOrWhiteSpace(Article.CategoryName))
+            {
+                <span class="tag">@Article.CategoryName</span>
+            }
+            @if (Article.PublishedAt is { } published)
+            {
+                <time class="meta" datetime="@published.ToString("yyyy-MM-dd")">@published.ToString("MMM d, yyyy")</time>
+            }
+        </div>
 
-        <h3 class="h5 card-title">
-            <a href="@DetailUrl" class="stretched-link text-decoration-none">@Article.Title</a>
+        <h3 class="font-display text-[1.55rem] leading-[1.12] font-semibold">
+            <a href="@DetailUrl" class="title-link">@Article.Title</a>
         </h3>
 
         @if (!string.IsNullOrWhiteSpace(Article.Description))
         {
-            <p class="card-text text-body-secondary article-card__excerpt">@Article.Description</p>
+            <p class="mt-3 text-ink-soft leading-relaxed flex-1">@Article.Description</p>
         }
 
-        <div class="article-card__meta mt-auto pt-2 d-flex align-items-center gap-2">
+        <div class="mt-5 pt-4 border-t border-line flex items-center gap-3">
             @if (!string.IsNullOrWhiteSpace(Article.AuthorAvatarUrl))
             {
-                <img src="@Article.AuthorAvatarUrl"
-                     class="article-card__avatar"
-                     alt=""
-                     loading="lazy" />
+                <img src="@Article.AuthorAvatarUrl" class="w-8 h-8 rounded-full object-cover grayscale" alt="" loading="lazy" />
             }
-            <span class="small text-body-secondary">
+            <span class="meta normal-case tracking-normal text-[0.82rem] text-ink-soft">
                 @if (!string.IsNullOrWhiteSpace(Article.AuthorName))
                 {
                     <span>By @Article.AuthorName</span>
                 }
-                @if (Article.PublishedAt is { } published)
-                {
-                    <span>
-                        @(string.IsNullOrWhiteSpace(Article.AuthorName) ? "" : " · ")
-                        <time datetime="@published.ToString("yyyy-MM-dd")">@published.ToString("MMM d, yyyy")</time>
-                    </span>
-                }
             </span>
+            <span class="ml-auto font-label text-xs tracking-widest uppercase text-vermilion opacity-0 -translate-x-1 transition-all duration-400 group-hover:opacity-100 group-hover:translate-x-0">Read&nbsp;→</span>
         </div>
     </div>
 </article>

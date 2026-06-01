@@ -2,26 +2,36 @@
 @rendermode InteractiveServer
 @inject IContentService ContentService
 
-<PageTitle>Strapi headless CMS demo</PageTitle>
+<PageTitle>The Headless Press · A Strapi + Blazor folio</PageTitle>
 
-<section class="cms-hero">
-    <p class="cms-eyebrow">Blazor · .NET Aspire · Strapi · GraphQL</p>
-    <h1>A headless CMS demo, rendered live by Blazor</h1>
-    <p class="lead">
-        Content is authored in the <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>
-        and rendered here over GraphQL through a clean hexagonal architecture — the UI depends only on
-        application ports.
-    </p>
-    <div class="cms-hero__actions">
-        <a class="btn btn-primary" href="/articles">Browse articles</a>
-        <a class="btn btn-outline-secondary" href="/headless-cms">How it works</a>
+<section class="mx-auto max-w-6xl px-6 pt-16 pb-12 md:pt-24 md:pb-16">
+    <p class="kicker rise">Dispatches from a headless CMS</p>
+    <h1 class="rise d-1 mt-6 font-display font-semibold tracking-tight leading-[0.92] text-[clamp(3rem,9vw,7rem)]">
+        The press that<br/>
+        <span class="italic">prints</span> itself<span class="text-vermilion">.</span>
+    </h1>
+    <div class="mt-8 grid gap-8 md:grid-cols-[1.1fr_0.9fr] md:items-end">
+        <p class="rise d-2 max-w-xl text-xl leading-relaxed text-ink-soft">
+            Every word is composed in <a class="ink-link" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi</a>,
+            queried over GraphQL, and set into type by Blazor — live, on each request, through a clean
+            hexagonal architecture where the page depends only on application ports.
+        </p>
+        <div class="rise d-3 flex flex-wrap gap-3 md:justify-end">
+            <a class="btn-ink" href="/articles">Read the folio</a>
+            <a class="btn-ghost" href="/headless-cms">The colophon</a>
+        </div>
     </div>
 </section>
 
-<section aria-labelledby="latest-heading" class="mt-5">
-    <div class="d-flex justify-content-between align-items-baseline">
-        <h2 id="latest-heading" class="h4">Latest articles</h2>
-        <a href="/articles" class="small">View all &rarr;</a>
+<div class="mx-auto max-w-6xl px-6"><hr class="rule"/></div>
+
+<section aria-labelledby="latest-heading" class="mx-auto max-w-6xl px-6 py-14">
+    <div class="flex items-end justify-between gap-4 mb-10">
+        <div>
+            <p class="kicker">The latest</p>
+            <h2 id="latest-heading" class="mt-3 font-display text-4xl font-semibold">Fresh off the wire</h2>
+        </div>
+        <a href="/articles" class="nav-link whitespace-nowrap">All articles →</a>
     </div>
 
     @if (_state == LoadState.Loading)
@@ -34,21 +44,42 @@
     }
     else if (_articles is { Count: 0 })
     {
-        <div class="alert alert-info" role="status">
-            No articles yet. Add one in the
-            <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.
-        </div>
+        <EmptyNote>No articles yet. Compose one in the <a class="ink-link" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi admin</a>.</EmptyNote>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mt-1">
-            @foreach (ArticleDto article in _articles!.Take(3))
+        var featured = _articles![0];
+        <a href="/articles/@featured.Id" class="group grid gap-8 md:grid-cols-2 md:items-center rise">
+            @if (!string.IsNullOrWhiteSpace(featured.CoverImageUrl))
             {
-                <div class="col">
-                    <ArticleCard Article="article" />
-                </div>
+                <div class="cover aspect-[3/2] order-1 md:order-none"><img src="@featured.CoverImageUrl" alt="" /></div>
             }
-        </div>
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="tag">@(featured.CategoryName ?? "Feature")</span>
+                    <span class="meta">Lead story</span>
+                </div>
+                <h3 class="font-display text-[clamp(2rem,4vw,3rem)] leading-[1.05] font-semibold">
+                    <span class="title-link">@featured.Title</span>
+                </h3>
+                @if (!string.IsNullOrWhiteSpace(featured.Description))
+                {
+                    <p class="mt-4 text-lg text-ink-soft leading-relaxed max-w-xl">@featured.Description</p>
+                }
+                <p class="meta mt-5">@(featured.AuthorName ?? "Staff") @(featured.PublishedAt is { } p ? "· " + p.ToString("MMM d, yyyy") : "")</p>
+            </div>
+        </a>
+
+        @if (_articles.Count > 1)
+        {
+            <hr class="rule my-12"/>
+            <div class="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach (var article in _articles.Skip(1).Take(3))
+                {
+                    <ArticleCard Article="article" />
+                }
+            </div>
+        }
     }
 </section>
 

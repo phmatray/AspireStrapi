@@ -1,23 +1,62 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div class="page">
-  <div class="sidebar">
-    <NavMenu/>
-  </div>
+<div class="min-h-screen flex flex-col">
 
-  <main>
-    <div class="top-row px-4">
-      <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-    </div>
+    <header class="sticky top-0 z-50 bg-paper/85 backdrop-blur-sm border-b border-ink">
+        <div class="border-b border-line">
+            <div class="mx-auto max-w-6xl px-6 h-9 flex items-center justify-between meta">
+                <span>Vol. X · A Headless CMS Folio</span>
+                <span class="hidden sm:inline">Strapi · GraphQL · Blazor · .NET&nbsp;10</span>
+            </div>
+        </div>
 
-    <article class="content px-4">
-      @Body
-    </article>
-  </main>
+        <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between gap-6">
+            <a href="/" class="group flex items-baseline gap-1.5 leading-none">
+                <span class="font-display text-2xl sm:text-[1.7rem] font-semibold tracking-tight">The&nbsp;Headless&nbsp;Press</span>
+                <span class="text-vermilion text-2xl sm:text-[1.7rem] leading-none transition-transform duration-500 group-hover:rotate-12">.</span>
+            </a>
+            <NavMenu/>
+        </div>
+    </header>
+
+    <main class="flex-1">
+        @Body
+    </main>
+
+    <footer class="mt-24 border-t border-ink bg-paper-soft">
+        <div class="mx-auto max-w-6xl px-6 py-14 grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+            <div>
+                <p class="font-display text-2xl font-semibold">The Headless Press<span class="text-vermilion">.</span></p>
+                <p class="mt-3 max-w-xs text-ink-soft">
+                    A demonstration folio — content composed in Strapi, set in type by Blazor,
+                    delivered over GraphQL through a clean hexagonal architecture.
+                </p>
+            </div>
+            <nav class="flex flex-col gap-2.5">
+                <p class="kicker kicker--plain mb-1">Sections</p>
+                <a class="ink-link w-fit" href="/articles">Articles</a>
+                <a class="ink-link w-fit" href="/categories">Categories</a>
+                <a class="ink-link w-fit" href="/authors">Authors</a>
+                <a class="ink-link w-fit" href="/headless-cms">Colophon</a>
+            </nav>
+            <nav class="flex flex-col gap-2.5">
+                <p class="kicker kicker--plain mb-1">The Press Room</p>
+                <a class="ink-link w-fit" href="http://127.0.0.1:1337/admin" target="_blank" rel="noopener noreferrer">Strapi Admin</a>
+                <a class="ink-link w-fit" href="http://127.0.0.1:1337/graphql" target="_blank" rel="noopener noreferrer">GraphQL Playground</a>
+                <a class="ink-link w-fit" href="https://learn.microsoft.com/aspnet/core/" target="_blank" rel="noopener noreferrer">Built with ASP.NET Core</a>
+            </nav>
+        </div>
+        <div class="border-t border-line">
+            <div class="mx-auto max-w-6xl px-6 h-12 flex items-center justify-between meta">
+                <span>Set in Fraunces, Newsreader &amp; Archivo</span>
+                <span>© MMXXVI</span>
+            </div>
+        </div>
+    </footer>
 </div>
 
-<div id="blazor-error-ui">
-  An unhandled error has occurred.
-  <a href="" class="reload">Reload</a>
-  <a class="dismiss">🗙</a>
+<div id="blazor-error-ui" class="fixed bottom-0 inset-x-0 z-[100] hidden bg-ink text-paper px-6 py-3 meta">
+    An unexpected error occurred.
+    <a href="" class="reload ink-link text-paper">Reload</a>
+    <a class="dismiss cursor-pointer">✕</a>
 </div>

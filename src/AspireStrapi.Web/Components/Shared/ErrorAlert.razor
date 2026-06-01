@@ -1,16 +1,11 @@
 @* Accessible error state with an optional retry action. *@
-<div class="alert alert-danger d-flex flex-column gap-2" role="alert">
-    <div>
-        <strong>Couldn't load this content.</strong>
-        <span class="d-block">@Message</span>
-    </div>
+<div class="border border-vermilion bg-vermilion/5 p-7" role="alert">
+    <p class="kicker kicker--plain text-vermilion">Stop the press</p>
+    <p class="font-display text-2xl font-semibold mt-2">Couldn't load this content.</p>
+    <p class="mt-2 text-ink-soft max-w-prose">@Message</p>
     @if (OnRetry.HasDelegate)
     {
-        <div>
-            <button type="button" class="btn btn-sm btn-outline-danger" @onclick="OnRetry">
-                Try again
-            </button>
-        </div>
+        <button type="button" class="btn-ghost mt-5" @onclick="OnRetry">Try again</button>
     }
 </div>
 

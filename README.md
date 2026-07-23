@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **This repository has moved.** The code now lives in **[phmatray/aspire-samples](https://github.com/phmatray/aspire-samples)** under [`samples/strapi-cms`](https://github.com/phmatray/aspire-samples/tree/main/samples/strapi-cms) — full git history preserved. This repository is archived (read-only).
+
 ![AspireStrapi banner](.github/banner.png)
 
 # AspireStrapi 🚀

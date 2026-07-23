@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "@strapi/plugin-graphql": "5.47.0",
+    "@strapi/plugin-graphql": "5.51.0",
     "fs-extra": "^11.0.0",
     "lodash.set": "^4.3.2",
     "mime-types": "^3.0.0",
-    "@strapi/strapi": "5.47.0",
-    "@strapi/plugin-users-permissions": "5.47.0",
-    "@strapi/plugin-cloud": "5.47.0",
-    "better-sqlite3": "12.10.0",
-    "pg": "8.13.1",
+    "@strapi/strapi": "5.51.0",
+    "@strapi/plugin-users-permissions": "5.51.0",
+    "@strapi/plugin-cloud": "5.51.0",
+    "better-sqlite3": "12.11.1",
+    "pg": "8.22.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.30.3",
@@ -33,7 +33,7 @@
     "template": "@strapi/template-blog"
   },
   "engines": {
-    "node": ">=18.0.0 <=24.16.0",
+    "node": ">=18.0.0 <=24.18.0",
     "npm": ">=6.0.0"
   },
   "license": "MIT"

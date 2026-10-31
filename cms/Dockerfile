@@ -1,5 +1,5 @@
 # Creating multi-stage build for production (npm-based, Strapi 5)
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 # Installing libvips-dev for sharp compatibility and build toolchain for
 # native modules (better-sqlite3, pg).
 RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev nasm bash vips-dev git
@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Creating final production image
-FROM node:24-alpine
+FROM node:26-alpine
 RUN apk add --no-cache vips-dev
 ENV NODE_ENV=production
 WORKDIR /opt/app
